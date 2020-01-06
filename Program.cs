@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.IO;
+using static System.Environment;
 
 namespace ChessDirectedGraphSimulation
 {
@@ -13,8 +15,23 @@ namespace ChessDirectedGraphSimulation
         {
             ChessPosition startPosition = new ChessPosition(3, 4);
             var adjacencyList = GetChessGraphAsAdjacencyList(KnightMovesAsNodes, startPosition);
+            var adjacencyListString = adjacencyList.ToString();
+            
+            Console.WriteLine(adjacencyListString);
 
-            Console.WriteLine(adjacencyList.ToString());
+            try
+            {
+                var desktopPath = GetFolderPath(SpecialFolder.Desktop);
+                var outputFolderPath = Path.Combine(desktopPath, "ChessDirectedGraphSimulation");
+                Directory.CreateDirectory(outputFolderPath);
+                var outputFilePath = Path.Combine(outputFolderPath, "adjacency_list.txt");
+
+                File.WriteAllText(outputFilePath, adjacencyListString);
+            }
+            catch(Exception e)
+            {
+                Console.WriteLine("u fucked up: " + e);
+            }
         }
 
         public static AdjecencyList GetChessGraphAsAdjacencyList(Func<Node, IEnumerable<Node>> DiscoverPossibleMovesAsNodes, ChessPosition chessPieceStartPosition)
@@ -117,6 +134,8 @@ namespace ChessDirectedGraphSimulation
                 else movesAsNodes.Add(NewNode(testPos));
             }
 
+            // lexicographic order
+            movesAsNodes.Sort(Node.CompareNodes);
             return movesAsNodes;
 
             bool InRange(ChessPosition position)

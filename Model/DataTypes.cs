@@ -50,6 +50,24 @@ namespace ChessDirectedGraphSimulation
             return Position.X == other.Position.X && Position.Y == other.Position.Y;
         }
 
+        public static int CompareNodes(Node first, Node second)
+        {
+            int result = 0;
+
+            if (first.Position.X < second.Position.X) result = -1;
+
+            else if (first.Position.X == second.Position.X)
+            {
+                if (first.Position.Y < second.Position.Y) result = - 1;
+                else if (first.Position.Y == second.Position.Y) result = 0;
+                else if (first.Position.Y > second.Position.Y) result = 1;
+            }
+
+            else result = 1;
+
+            return result;
+        }
+
         public override string ToString()
         {
             return $"Node{Name.ToString()}\t@ {Position.ToString()}";
