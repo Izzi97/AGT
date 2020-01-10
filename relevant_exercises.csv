@@ -1,0 +1,40 @@
+sheet 1
+ex1;true
+ex2;true
+ex3;true
+ex4;true
+
+sheet 2
+ex1;false
+ex2;true
+ex3;true
+ex4;true
+
+sheet 3
+ex1;true
+ex2;false
+
+sheet 4
+ex1;false
+
+sheet 5
+ex1;false
+ex2;false
+ex3;true
+ex4;true
+ex5;true
+
+sheet 6
+ex1;true
+ex2;false
+ex3;false
+ex4;true
+
+sheet 7
+ex1;true
+ex2;true
+ex3;false
+ex4;false
+ex5;true
+ex6;true
+ex7;true
