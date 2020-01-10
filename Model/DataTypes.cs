@@ -1,7 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System;
 
-namespace ChessDirectedGraphSimulation
+namespace AGT
 {
     public class ChessPosition
     {
@@ -35,22 +36,22 @@ namespace ChessDirectedGraphSimulation
         }
     }
 
-    public class Node
+    public class Vertice
     {
         public string Name { get; }
         public ChessPosition Position { get; }
-        public Node(string name, ChessPosition position)
+        public Vertice(string name, ChessPosition position)
         {
             Name = name;
             Position = position;
         }
 
-        public bool EqualsNode(Node other)
+        public bool EqualsNode(Vertice other)
         {
             return Position.X == other.Position.X && Position.Y == other.Position.Y;
         }
 
-        public static int CompareNodes(Node first, Node second)
+        public static int CompareNodes(Vertice first, Vertice second)
         {
             int result = 0;
 
@@ -76,19 +77,25 @@ namespace ChessDirectedGraphSimulation
 
     public class AdjecencyList
     {
-        private readonly Dictionary<Node, IEnumerable<Node>> adjacencyList;
+        private readonly Dictionary<Vertice, IEnumerable<Vertice>> adjacencyList;
 
         public AdjecencyList()
         {
-            adjacencyList = new Dictionary<Node, IEnumerable<Node>>();
+            adjacencyList = new Dictionary<Vertice, IEnumerable<Vertice>>();
         }
 
-        public void AddEntry(Node from, IEnumerable<Node> to)
+        public void AddEntry(Vertice from, IEnumerable<Vertice> to)
         {
             adjacencyList.Add(from, to);
         }
 
-        public bool HasEntryFor(Node from)
+        public IEnumerable<Vertice> GetNeighboursFor(Vertice v)
+        {
+            if (!adjacencyList.TryGetValue(v, out IEnumerable<Vertice> neighbours)) throw new ArgumentException("adjacency list does not contain an entry for vertice " + v.ToString());
+            return neighbours;
+        }
+
+        public bool HasEntryFor(Vertice from)
         {
             return adjacencyList.Keys.Where(node => from.EqualsNode(node)).Any();
         }
@@ -109,6 +116,17 @@ namespace ChessDirectedGraphSimulation
             }
 
             return output;
+        }
+    }
+
+    public class Graph
+    {
+        public HashSet<Vertice> Vertices { get; }
+        public AdjecencyList AdjecencyList { get; }
+        public Graph(HashSet<Vertice> vertices, AdjecencyList adjecencyList)
+        {
+            Vertices = vertices;
+            AdjecencyList = adjecencyList;
         }
     }
 }

@@ -3,7 +3,12 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.28729.10
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChessDirectedGraphSimulation", "ChessDirectedGraphSimulation.csproj", "{91363400-8F3A-4B95-9BF9-DE0B31C4342C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AGT", "AGT.csproj", "{91363400-8F3A-4B95-9BF9-DE0B31C4342C}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{A6315267-7403-4278-9F6E-B7B9ED3718E4}"
+	ProjectSection(SolutionItems) = preProject
+		relevant_exercises.csv = relevant_exercises.csv
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

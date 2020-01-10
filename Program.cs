@@ -4,138 +4,145 @@ using System.Linq;
 using System.IO;
 using static System.Environment;
 
-namespace ChessDirectedGraphSimulation
+namespace AGT
 {
     class Program
     {
         public static int nodeCounter = 1;
-        public static List<Node> nodes = new List<Node>();
+        public static List<Vertice> nodes = new List<Vertice>();
 
         static void Main(string[] args)
         {
             ChessPosition startPosition = new ChessPosition(3, 4);
-            var adjacencyList = GetChessGraphAsAdjacencyList(KnightMovesAsNodes, startPosition);
-            var adjacencyListString = adjacencyList.ToString();
-            
+            var graph = GetChessGraph(KnightMovesAsNodes, startPosition);
+            var adjacencyListString = graph.AdjecencyList.ToString();
+
             Console.WriteLine(adjacencyListString);
 
-            try
-            {
-                var desktopPath = GetFolderPath(SpecialFolder.Desktop);
-                var outputFolderPath = Path.Combine(desktopPath, "ChessDirectedGraphSimulation");
-                Directory.CreateDirectory(outputFolderPath);
-                var outputFilePath = Path.Combine(outputFolderPath, "adjacency_list.txt");
+            var bfsResult = Algorithms.BFS(graph, graph.Vertices.First());
 
-                File.WriteAllText(outputFilePath, adjacencyListString);
-            }
-            catch(Exception e)
-            {
-                Console.WriteLine("u fucked up: " + e);
-            }
+            Console.WriteLine(Algorithms.BFSResultAsCSV(bfsResult));
+
+            //try
+            //{
+            //    var desktopPath = GetFolderPath(SpecialFolder.Desktop);
+            //    var outputFolderPath = Path.Combine(desktopPath, "ChessDirectedGraphSimulation");
+            //    Directory.CreateDirectory(outputFolderPath);
+            //    var outputFilePath = Path.Combine(outputFolderPath, "adjacency_list.txt");
+
+            //    File.WriteAllText(outputFilePath, adjacencyListString);
+            //}
+            //catch (Exception e)
+            //{
+            //    Console.WriteLine("u fucked up: " + e);
+            //}
         }
 
-        public static AdjecencyList GetChessGraphAsAdjacencyList(Func<Node, IEnumerable<Node>> DiscoverPossibleMovesAsNodes, ChessPosition chessPieceStartPosition)
+        public static Graph GetChessGraph(Func<Vertice, IEnumerable<Vertice>> DiscoverPossibleMovesAsNodes, ChessPosition chessPieceStartPosition)
         {
             AdjecencyList adjacencyList = new AdjecencyList();
+            HashSet<Vertice> vertices = new HashSet<Vertice>();
 
-            Queue<Node> nodesToProcess = new Queue<Node>();
-            Node startNode = NewNode(chessPieceStartPosition);
+            Queue<Vertice> verticeQueue = new Queue<Vertice>();
+            Vertice startVertice = NewVertice(chessPieceStartPosition);
+            vertices.Add(startVertice);
 
-            nodesToProcess.Enqueue(startNode);
+            verticeQueue.Enqueue(startVertice);
 
-            while(nodesToProcess.Count != 0)
+            while(verticeQueue.Count != 0)
             {
-                Node sourceNode = nodesToProcess.Dequeue();
+                Vertice sourceVertice = verticeQueue.Dequeue();
+                vertices.Add(sourceVertice);
 
-                if (!adjacencyList.HasEntryFor(sourceNode)) {
-                    IEnumerable<Node> targetNodes = DiscoverPossibleMovesAsNodes(sourceNode);
-                    adjacencyList.AddEntry(sourceNode, targetNodes);
-                    foreach (var node in targetNodes) nodesToProcess.Enqueue(node);
+                if (!adjacencyList.HasEntryFor(sourceVertice)) {
+                    IEnumerable<Vertice> targetNodes = DiscoverPossibleMovesAsNodes(sourceVertice);
+                    adjacencyList.AddEntry(sourceVertice, targetNodes);
+                    foreach (var node in targetNodes) verticeQueue.Enqueue(node);
                 }
             }
 
-            return adjacencyList;
+            return new Graph(vertices, adjacencyList);
         }
 
-        public static Node NewNode(ChessPosition position)
+        public static Vertice NewVertice(ChessPosition position)
         {
             string name = (nodeCounter++).ToString();
-            Node newNode = new Node(name, position);
+            Vertice newNode = new Vertice(name, position);
             nodes.Add(newNode);
             return newNode;
         }
 
-        public static IEnumerable<Node> KnightMovesAsNodes(Node startingNode)
+        public static IEnumerable<Vertice> KnightMovesAsNodes(Vertice startingNode)
         {
-            List<Node> movesAsNodes = new List<Node>();
+            List<Vertice> movesAsNodes = new List<Vertice>();
             ChessPosition pos = startingNode.Position;
 
             ChessPosition testPos = new ChessPosition(pos.X + 1, pos.Y + 2);
             if (InRange(testPos))
             {
-                (bool exists, Node node) = NodeForPosExists(testPos);
+                (bool exists, Vertice node) = NodeForPosExists(testPos);
                 if(exists) movesAsNodes.Add(node);
-                else movesAsNodes.Add(NewNode(testPos));
+                else movesAsNodes.Add(NewVertice(testPos));
             }
 
             testPos = new ChessPosition(pos.X + 2, pos.Y + 1);
             if (InRange(testPos))
             {
-                (bool exists, Node node) = NodeForPosExists(testPos);
+                (bool exists, Vertice node) = NodeForPosExists(testPos);
                 if (exists) movesAsNodes.Add(node);
-                else movesAsNodes.Add(NewNode(testPos));
+                else movesAsNodes.Add(NewVertice(testPos));
             }
 
             testPos = new ChessPosition(pos.X + 2, pos.Y - 1);
             if (InRange(testPos))
             {
-                (bool exists, Node node) = NodeForPosExists(testPos);
+                (bool exists, Vertice node) = NodeForPosExists(testPos);
                 if (exists) movesAsNodes.Add(node);
-                else movesAsNodes.Add(NewNode(testPos));
+                else movesAsNodes.Add(NewVertice(testPos));
             }
 
             testPos = new ChessPosition(pos.X + 1, pos.Y - 2);
             if (InRange(testPos))
             {
-                (bool exists, Node node) = NodeForPosExists(testPos);
+                (bool exists, Vertice node) = NodeForPosExists(testPos);
                 if (exists) movesAsNodes.Add(node);
-                else movesAsNodes.Add(NewNode(testPos));
+                else movesAsNodes.Add(NewVertice(testPos));
             }
 
             testPos = new ChessPosition(pos.X - 1, pos.Y - 2);
             if (InRange(testPos))
             {
-                (bool exists, Node node) = NodeForPosExists(testPos);
+                (bool exists, Vertice node) = NodeForPosExists(testPos);
                 if (exists) movesAsNodes.Add(node);
-                else movesAsNodes.Add(NewNode(testPos));
+                else movesAsNodes.Add(NewVertice(testPos));
             }
 
             testPos = new ChessPosition(pos.X - 2, pos.Y - 1);
             if (InRange(testPos))
             {
-                (bool exists, Node node) = NodeForPosExists(testPos);
+                (bool exists, Vertice node) = NodeForPosExists(testPos);
                 if (exists) movesAsNodes.Add(node);
-                else movesAsNodes.Add(NewNode(testPos));
+                else movesAsNodes.Add(NewVertice(testPos));
             }
 
             testPos = new ChessPosition(pos.X - 2, pos.Y + 1);
             if (InRange(testPos))
             {
-                (bool exists, Node node) = NodeForPosExists(testPos);
+                (bool exists, Vertice node) = NodeForPosExists(testPos);
                 if (exists) movesAsNodes.Add(node);
-                else movesAsNodes.Add(NewNode(testPos));
+                else movesAsNodes.Add(NewVertice(testPos));
             }
 
             testPos = new ChessPosition(pos.X - 1, pos.Y + 2);
             if (InRange(testPos))
             {
-                (bool exists, Node node) = NodeForPosExists(testPos);
+                (bool exists, Vertice node) = NodeForPosExists(testPos);
                 if (exists) movesAsNodes.Add(node);
-                else movesAsNodes.Add(NewNode(testPos));
+                else movesAsNodes.Add(NewVertice(testPos));
             }
 
             // lexicographic order
-            movesAsNodes.Sort(Node.CompareNodes);
+            movesAsNodes.Sort(Vertice.CompareNodes);
             return movesAsNodes;
 
             bool InRange(ChessPosition position)
@@ -143,9 +150,9 @@ namespace ChessDirectedGraphSimulation
                 return position.X > 0 && position.X <= 8 && position.Y > 0 && position.Y <= 8;
             }
 
-            (bool exists, Node existingNode) NodeForPosExists(ChessPosition positionToTest)
+            (bool exists, Vertice existingNode) NodeForPosExists(ChessPosition positionToTest)
             {
-                Node dummy = new Node("phyack", positionToTest);
+                Vertice dummy = new Vertice("phyack", positionToTest);
                 var candidates = nodes.Where(node => dummy.EqualsNode(node));
                 if (candidates.Any())
                 {
