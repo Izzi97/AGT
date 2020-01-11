@@ -9,7 +9,7 @@ namespace AGT
     class Program
     {
         public static int nodeCounter = 1;
-        public static List<Vertice> nodes = new List<Vertice>();
+        public static List<Vertex> nodes = new List<Vertex>();
 
         static void Main(string[] args)
         {
@@ -21,6 +21,8 @@ namespace AGT
 
             var bfsResult = Algorithms.BFS(graph, graph.Vertices.First());
 
+            Console.WriteLine("BFS finished ...");
+            Console.WriteLine("... with results table:");
             Console.WriteLine(Algorithms.BFSResultAsCSV(bfsResult));
 
             //try
@@ -38,24 +40,24 @@ namespace AGT
             //}
         }
 
-        public static Graph GetChessGraph(Func<Vertice, IEnumerable<Vertice>> DiscoverPossibleMovesAsNodes, ChessPosition chessPieceStartPosition)
+        public static Graph GetChessGraph(Func<Vertex, IEnumerable<Vertex>> DiscoverPossibleMovesAsNodes, ChessPosition chessPieceStartPosition)
         {
             AdjecencyList adjacencyList = new AdjecencyList();
-            HashSet<Vertice> vertices = new HashSet<Vertice>();
+            HashSet<Vertex> vertices = new HashSet<Vertex>();
 
-            Queue<Vertice> verticeQueue = new Queue<Vertice>();
-            Vertice startVertice = NewVertice(chessPieceStartPosition);
+            Queue<Vertex> verticeQueue = new Queue<Vertex>();
+            Vertex startVertice = NewVertice(chessPieceStartPosition);
             vertices.Add(startVertice);
 
             verticeQueue.Enqueue(startVertice);
 
             while(verticeQueue.Count != 0)
             {
-                Vertice sourceVertice = verticeQueue.Dequeue();
+                Vertex sourceVertice = verticeQueue.Dequeue();
                 vertices.Add(sourceVertice);
 
                 if (!adjacencyList.HasEntryFor(sourceVertice)) {
-                    IEnumerable<Vertice> targetNodes = DiscoverPossibleMovesAsNodes(sourceVertice);
+                    IEnumerable<Vertex> targetNodes = DiscoverPossibleMovesAsNodes(sourceVertice);
                     adjacencyList.AddEntry(sourceVertice, targetNodes);
                     foreach (var node in targetNodes) verticeQueue.Enqueue(node);
                 }
@@ -64,23 +66,23 @@ namespace AGT
             return new Graph(vertices, adjacencyList);
         }
 
-        public static Vertice NewVertice(ChessPosition position)
+        public static Vertex NewVertice(ChessPosition position)
         {
             string name = (nodeCounter++).ToString();
-            Vertice newNode = new Vertice(name, position);
+            Vertex newNode = new Vertex(name, position);
             nodes.Add(newNode);
             return newNode;
         }
 
-        public static IEnumerable<Vertice> KnightMovesAsNodes(Vertice startingNode)
+        public static IEnumerable<Vertex> KnightMovesAsNodes(Vertex startingNode)
         {
-            List<Vertice> movesAsNodes = new List<Vertice>();
+            List<Vertex> movesAsNodes = new List<Vertex>();
             ChessPosition pos = startingNode.Position;
 
             ChessPosition testPos = new ChessPosition(pos.X + 1, pos.Y + 2);
             if (InRange(testPos))
             {
-                (bool exists, Vertice node) = NodeForPosExists(testPos);
+                (bool exists, Vertex node) = NodeForPosExists(testPos);
                 if(exists) movesAsNodes.Add(node);
                 else movesAsNodes.Add(NewVertice(testPos));
             }
@@ -88,7 +90,7 @@ namespace AGT
             testPos = new ChessPosition(pos.X + 2, pos.Y + 1);
             if (InRange(testPos))
             {
-                (bool exists, Vertice node) = NodeForPosExists(testPos);
+                (bool exists, Vertex node) = NodeForPosExists(testPos);
                 if (exists) movesAsNodes.Add(node);
                 else movesAsNodes.Add(NewVertice(testPos));
             }
@@ -96,7 +98,7 @@ namespace AGT
             testPos = new ChessPosition(pos.X + 2, pos.Y - 1);
             if (InRange(testPos))
             {
-                (bool exists, Vertice node) = NodeForPosExists(testPos);
+                (bool exists, Vertex node) = NodeForPosExists(testPos);
                 if (exists) movesAsNodes.Add(node);
                 else movesAsNodes.Add(NewVertice(testPos));
             }
@@ -104,7 +106,7 @@ namespace AGT
             testPos = new ChessPosition(pos.X + 1, pos.Y - 2);
             if (InRange(testPos))
             {
-                (bool exists, Vertice node) = NodeForPosExists(testPos);
+                (bool exists, Vertex node) = NodeForPosExists(testPos);
                 if (exists) movesAsNodes.Add(node);
                 else movesAsNodes.Add(NewVertice(testPos));
             }
@@ -112,7 +114,7 @@ namespace AGT
             testPos = new ChessPosition(pos.X - 1, pos.Y - 2);
             if (InRange(testPos))
             {
-                (bool exists, Vertice node) = NodeForPosExists(testPos);
+                (bool exists, Vertex node) = NodeForPosExists(testPos);
                 if (exists) movesAsNodes.Add(node);
                 else movesAsNodes.Add(NewVertice(testPos));
             }
@@ -120,7 +122,7 @@ namespace AGT
             testPos = new ChessPosition(pos.X - 2, pos.Y - 1);
             if (InRange(testPos))
             {
-                (bool exists, Vertice node) = NodeForPosExists(testPos);
+                (bool exists, Vertex node) = NodeForPosExists(testPos);
                 if (exists) movesAsNodes.Add(node);
                 else movesAsNodes.Add(NewVertice(testPos));
             }
@@ -128,7 +130,7 @@ namespace AGT
             testPos = new ChessPosition(pos.X - 2, pos.Y + 1);
             if (InRange(testPos))
             {
-                (bool exists, Vertice node) = NodeForPosExists(testPos);
+                (bool exists, Vertex node) = NodeForPosExists(testPos);
                 if (exists) movesAsNodes.Add(node);
                 else movesAsNodes.Add(NewVertice(testPos));
             }
@@ -136,13 +138,13 @@ namespace AGT
             testPos = new ChessPosition(pos.X - 1, pos.Y + 2);
             if (InRange(testPos))
             {
-                (bool exists, Vertice node) = NodeForPosExists(testPos);
+                (bool exists, Vertex node) = NodeForPosExists(testPos);
                 if (exists) movesAsNodes.Add(node);
                 else movesAsNodes.Add(NewVertice(testPos));
             }
 
             // lexicographic order
-            movesAsNodes.Sort(Vertice.CompareNodes);
+            movesAsNodes.Sort(Vertex.CompareNodes);
             return movesAsNodes;
 
             bool InRange(ChessPosition position)
@@ -150,9 +152,9 @@ namespace AGT
                 return position.X > 0 && position.X <= 8 && position.Y > 0 && position.Y <= 8;
             }
 
-            (bool exists, Vertice existingNode) NodeForPosExists(ChessPosition positionToTest)
+            (bool exists, Vertex existingNode) NodeForPosExists(ChessPosition positionToTest)
             {
-                Vertice dummy = new Vertice("phyack", positionToTest);
+                Vertex dummy = new Vertex("phyack", positionToTest);
                 var candidates = nodes.Where(node => dummy.EqualsNode(node));
                 if (candidates.Any())
                 {

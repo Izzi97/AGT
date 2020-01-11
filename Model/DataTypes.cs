@@ -36,22 +36,22 @@ namespace AGT
         }
     }
 
-    public class Vertice
+    public class Vertex
     {
         public string Name { get; }
         public ChessPosition Position { get; }
-        public Vertice(string name, ChessPosition position)
+        public Vertex(string name, ChessPosition position)
         {
             Name = name;
             Position = position;
         }
 
-        public bool EqualsNode(Vertice other)
+        public bool EqualsNode(Vertex other)
         {
             return Position.X == other.Position.X && Position.Y == other.Position.Y;
         }
 
-        public static int CompareNodes(Vertice first, Vertice second)
+        public static int CompareNodes(Vertex first, Vertex second)
         {
             int result = 0;
 
@@ -75,27 +75,41 @@ namespace AGT
         }
     }
 
+    public class WeightedEdge
+    {
+        public Vertex From { get; }
+        public Vertex To { get; }
+        public double Weight { get; set; }
+
+        public WeightedEdge(Vertex from, Vertex to, double weight)
+        {
+            From = from;
+            To = to;
+            Weight = weight;
+        }
+    }
+
     public class AdjecencyList
     {
-        private readonly Dictionary<Vertice, IEnumerable<Vertice>> adjacencyList;
+        private readonly Dictionary<Vertex, IEnumerable<Vertex>> adjacencyList;
 
         public AdjecencyList()
         {
-            adjacencyList = new Dictionary<Vertice, IEnumerable<Vertice>>();
+            adjacencyList = new Dictionary<Vertex, IEnumerable<Vertex>>();
         }
 
-        public void AddEntry(Vertice from, IEnumerable<Vertice> to)
+        public void AddEntry(Vertex from, IEnumerable<Vertex> to)
         {
             adjacencyList.Add(from, to);
         }
 
-        public IEnumerable<Vertice> GetNeighboursFor(Vertice v)
+        public IEnumerable<Vertex> GetNeighboursFor(Vertex v)
         {
-            if (!adjacencyList.TryGetValue(v, out IEnumerable<Vertice> neighbours)) throw new ArgumentException("adjacency list does not contain an entry for vertice " + v.ToString());
+            if (!adjacencyList.TryGetValue(v, out IEnumerable<Vertex> neighbours)) throw new ArgumentException("adjacency list does not contain an entry for vertice " + v.ToString());
             return neighbours;
         }
 
-        public bool HasEntryFor(Vertice from)
+        public bool HasEntryFor(Vertex from)
         {
             return adjacencyList.Keys.Where(node => from.EqualsNode(node)).Any();
         }
@@ -121,12 +135,21 @@ namespace AGT
 
     public class Graph
     {
-        public HashSet<Vertice> Vertices { get; }
+        public HashSet<Vertex> Vertices { get; }
         public AdjecencyList AdjecencyList { get; }
-        public Graph(HashSet<Vertice> vertices, AdjecencyList adjecencyList)
+        public Graph(HashSet<Vertex> vertices, AdjecencyList adjecencyList)
         {
             Vertices = vertices;
             AdjecencyList = adjecencyList;
+        }
+    }
+
+    public class WeightedDigraph : Graph
+    {
+        public List<WeightedEdge> WeightedEdges;
+        public WeightedDigraph(HashSet<Vertex> vertices, AdjecencyList adjecencyList, List<WeightedEdge> edges) : base(vertices, adjecencyList)
+        {
+            WeightedEdges = edges;
         }
     }
 }

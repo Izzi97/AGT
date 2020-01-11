@@ -7,22 +7,22 @@ namespace AGT
 {
     public static partial class Algorithms
     {
-        public static Dictionary<Vertice, (Vertice predecessor, int rootDistance, int index)> BFS(Graph graph, Vertice startVertice)
+        public static Dictionary<Vertex, (Vertex predecessor, int rootDistance, int index)> BFS(Graph graph, Vertex startVertice)
         {
-            if (!graph.Vertices.Contains(startVertice)) throw new ArgumentException("start vertice not contained in vertice set of graph");
+            if (!graph.Vertices.Contains(startVertice)) throw new ArgumentException("start vertex not contained in vertice set of graph");
 
-            Vertice[] tmpVerts = new Vertice[graph.Vertices.Count];
+            Vertex[] tmpVerts = new Vertex[graph.Vertices.Count];
             graph.Vertices.CopyTo(tmpVerts);
-            var vertices = new HashSet<Vertice>(tmpVerts);
+            var vertices = new HashSet<Vertex>(tmpVerts);
             var adjacencyList = graph.AdjecencyList;
 
-            var queue = new Queue<Vertice>();
+            var queue = new Queue<Vertex>();
             queue.Enqueue(startVertice);
             vertices.Remove(startVertice);
 
             int rootDistance = 0;
             int index = 1;
-            var result = new Dictionary<Vertice, (Vertice predecessor, int rootDistance, int index)>();
+            var result = new Dictionary<Vertex, (Vertex predecessor, int rootDistance, int index)>();
 
             result.Add(startVertice, (null, rootDistance, index));
 
@@ -47,14 +47,12 @@ namespace AGT
             return result;
         }
 
-       
-        public static string BFSResultAsCSV(Dictionary<Vertice, (Vertice predecessor, int rootDistance, int index)> bfsResult)
+        public static string BFSResultAsCSV(Dictionary<Vertex, (Vertex predecessor, int rootDistance, int index)> bfsResult)
         {
             var resultBuilder = new StringBuilder();
             resultBuilder.AppendLine("vertice;predecessor;root_distance;index");
 
             var verticeMappingList = bfsResult.ToList();
-            verticeMappingList.Sort((kvp1, kvp2) => kvp1.Value.index.CompareTo(kvp1.Value.index));
 
             foreach (var kvp in verticeMappingList)
             {
