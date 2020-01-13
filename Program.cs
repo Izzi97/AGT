@@ -1,8 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.IO;
+using System.Text;
+using System.Linq;
+using System.Collections.Generic;
 using static System.Environment;
+using AGT.Model;
 
 namespace AGT
 {
@@ -13,36 +15,52 @@ namespace AGT
 
         static void Main(string[] args)
         {
+            ////////////////////////////////////////////////////////////////////////////////
+            /// GRAPH
+            ////////////////////////////////////////////////////////////////////////////////
             ChessPosition startPosition = new ChessPosition(3, 4);
             var graph = GetChessGraph(KnightMovesAsNodes, startPosition);
-            var adjacencyListString = graph.AdjecencyList.ToString();
+            var adjacencyListCSV = graph.AdjacencyList.AdjacencyListAsCSV();
 
-            Console.WriteLine(adjacencyListString);
+            string results = new StringBuilder("graph for knight moves as adjacency table:").AppendLine(adjacencyListCSV).ToString();
+            Console.WriteLine(results);
+            ResultsToDesktop(adjacencyListCSV, "graph.csv");
 
-            var bfsResult = Algorithms.BFS(graph, graph.Vertices.First());
+            var source = graph.Vertices.First();
+            var target = graph.Vertices.Where(v => v.Position.ToString() == "(A,1)").First();
 
-            Console.WriteLine("BFS finished ...");
-            Console.WriteLine("... with results table:");
-            Console.WriteLine(Algorithms.BFSResultAsCSV(bfsResult));
 
-            //try
-            //{
-            //    var desktopPath = GetFolderPath(SpecialFolder.Desktop);
-            //    var outputFolderPath = Path.Combine(desktopPath, "ChessDirectedGraphSimulation");
-            //    Directory.CreateDirectory(outputFolderPath);
-            //    var outputFilePath = Path.Combine(outputFolderPath, "adjacency_list.txt");
+            ////////////////////////////////////////////////////////////////////////////////
+            /// BFS
+            ////////////////////////////////////////////////////////////////////////////////
+            var bfsResult = Algorithms.BFS(graph, source);
+            var bfsResultsCSV = Algorithms.BFSResultAsCSV(bfsResult);
 
-            //    File.WriteAllText(outputFilePath, adjacencyListString);
-            //}
-            //catch (Exception e)
-            //{
-            //    Console.WriteLine("u fucked up: " + e);
-            //}
+            Console.WriteLine($"BFS results table - source {source}:");
+            Console.WriteLine(bfsResultsCSV);
+            ResultsToDesktop(bfsResultsCSV, "bfs.csv");
+
+
+            ////////////////////////////////////////////////////////////////////////////////
+            /// A*
+            ////////////////////////////////////////////////////////////////////////////////
+            var aStarRes = Algorithms.AStar(
+                (WeightedDigraph)graph, 
+                source, 
+                target, 
+                Vertex.GetScaledManhattenDist()
+            );
+            var aStarResCSV = Algorithms.AStarResultTableAsCSV(aStarRes);
+            var aStarResPath = Algorithms.FormatPathDistanceTuple(Algorithms.PathDistTupleFromSPResult(aStarRes, target));
+            Console.WriteLine($"A* from {source} to {target}");
+            Console.WriteLine(aStarResCSV);
+            Console.WriteLine(aStarResPath);
+            ResultsToDesktop(aStarResCSV, "aStar.csv");
         }
 
         public static Graph GetChessGraph(Func<Vertex, IEnumerable<Vertex>> DiscoverPossibleMovesAsNodes, ChessPosition chessPieceStartPosition)
         {
-            AdjecencyList adjacencyList = new AdjecencyList();
+            AdjacencyList adjacencyList = new AdjacencyList();
             HashSet<Vertex> vertices = new HashSet<Vertex>();
 
             Queue<Vertex> verticeQueue = new Queue<Vertex>();
@@ -63,7 +81,7 @@ namespace AGT
                 }
             }
 
-            return new Graph(vertices, adjacencyList);
+            return new WeightedDigraph(vertices, adjacencyList, null);
         }
 
         public static Vertex NewVertice(ChessPosition position)
@@ -144,7 +162,7 @@ namespace AGT
             }
 
             // lexicographic order
-            movesAsNodes.Sort(Vertex.CompareNodes);
+            movesAsNodes.Sort(startingNode.Compare);
             return movesAsNodes;
 
             bool InRange(ChessPosition position)
@@ -155,7 +173,7 @@ namespace AGT
             (bool exists, Vertex existingNode) NodeForPosExists(ChessPosition positionToTest)
             {
                 Vertex dummy = new Vertex("phyack", positionToTest);
-                var candidates = nodes.Where(node => dummy.EqualsNode(node));
+                var candidates = nodes.Where(node => dummy.Equals(node));
                 if (candidates.Any())
                 {
                     return (true, candidates.First());
@@ -164,6 +182,23 @@ namespace AGT
                 {
                     return (false, null);
                 }
+            }
+        }
+
+        public static void ResultsToDesktop(string results, string filename)
+        {
+            try
+            {
+                var desktopPath = GetFolderPath(SpecialFolder.Desktop);
+                var outputFolderPath = Path.Combine(desktopPath, "AGT_Hausuebung");
+                Directory.CreateDirectory(outputFolderPath);
+                var outputFilePath = Path.Combine(outputFolderPath, filename);
+
+                File.WriteAllText(outputFilePath, results);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("u fucked up: " + e);
             }
         }
     }

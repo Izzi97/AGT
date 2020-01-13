@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Linq;
+using AGT.Model;
 
 namespace AGT
 {
@@ -11,20 +12,21 @@ namespace AGT
         {
             if (!graph.Vertices.Contains(startVertice)) throw new ArgumentException("start vertex not contained in vertice set of graph");
 
-            Vertex[] tmpVerts = new Vertex[graph.Vertices.Count];
-            graph.Vertices.CopyTo(tmpVerts);
-            var vertices = new HashSet<Vertex>(tmpVerts);
-            var adjacencyList = graph.AdjecencyList;
-
+            Vertex[] vertsTmp = new Vertex[graph.Vertices.Count()];
+            graph.Vertices.ToList().CopyTo(vertsTmp);
+            IEnumerable<Vertex> vertices = vertsTmp;
+            var adjacencyList = graph.AdjacencyList;
             var queue = new Queue<Vertex>();
+
             queue.Enqueue(startVertice);
-            vertices.Remove(startVertice);
+            vertices = vertices.Except(startVertice);
 
             int rootDistance = 0;
             int index = 1;
-            var result = new Dictionary<Vertex, (Vertex predecessor, int rootDistance, int index)>();
-
-            result.Add(startVertice, (null, rootDistance, index));
+            var result = new Dictionary<Vertex, (Vertex predecessor, int rootDistance, int index)>
+            {
+                { startVertice, (null, rootDistance, index) }
+            };
 
             while (queue.Count != 0)
             {
@@ -36,7 +38,7 @@ namespace AGT
                     if (vertices.Contains(neighbour))
                     {
                         queue.Enqueue(neighbour);
-                        vertices.Remove(neighbour);
+                        vertices = vertices.Except(neighbour);
                         result.Add(neighbour, (head, rootDistance + 1, ++index));
                     }
                 }
@@ -57,7 +59,7 @@ namespace AGT
             foreach (var kvp in verticeMappingList)
             {
                 string vertice = kvp.Key.ToString();
-                string predecessor = kvp.Value.predecessor != null ? kvp.Value.predecessor.ToString() : "nil";
+                string predecessor = !Equals(kvp.Value.predecessor, null) ? kvp.Value.predecessor.ToString() : "nil";
                 string root_dist = kvp.Value.rootDistance.ToString();
                 string index = kvp.Value.index.ToString();
                 resultBuilder.AppendLine($"{vertice};{predecessor};{root_dist};{index}");
