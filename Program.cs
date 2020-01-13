@@ -10,8 +10,8 @@ namespace AGT
 {
     class Program
     {
-        public static int nodeCounter = 1;
-        public static List<Vertex> nodes = new List<Vertex>();
+        public static int vertexCounter = 1;
+        public static List<Vertex> vertices = new List<Vertex>();
 
         static void Main(string[] args)
         {
@@ -22,8 +22,10 @@ namespace AGT
             var graph = GetChessGraph(KnightMovesAsNodes, startPosition);
             var adjacencyListCSV = graph.AdjacencyList.AdjacencyListAsCSV();
 
-            string results = new StringBuilder("graph for knight moves as adjacency table:").AppendLine(adjacencyListCSV).ToString();
-            Console.WriteLine(results);
+            string results = new StringBuilder("graph for knight moves as adjacency table:")
+                .AppendLine(adjacencyListCSV)
+                .ToString();
+            Console.Write(results);
             ResultsToDesktop(adjacencyListCSV, "graph.csv");
 
             var source = graph.Vertices.First();
@@ -33,11 +35,21 @@ namespace AGT
             ////////////////////////////////////////////////////////////////////////////////
             /// BFS
             ////////////////////////////////////////////////////////////////////////////////
-            var bfsResult = Algorithms.BFS(graph, source);
+            var bfsResult = Algorithms.BFS(graph, source, target);
             var bfsResultsCSV = Algorithms.BFSResultAsCSV(bfsResult);
+
+            var p = new Dictionary<Vertex, Vertex>(bfsResult.Select(kvp => new KeyValuePair<Vertex, Vertex>(kvp.Key, kvp.Value.predecessor)));
+            var d = new Dictionary<Vertex, double>(bfsResult.Select(kvp => new KeyValuePair<Vertex, double>(kvp.Key, kvp.Value.sourceDistance)));
+            var bfsDiscoverRatio = DiscoveryRatio(d);
+
+            var bfsPathDistTuple = Algorithms.PathDistTupleFromSPResult((p, d), target);
+            var bfsPathDistTupleString = Algorithms.FormatPathDistanceTuple(bfsPathDistTuple);
 
             Console.WriteLine($"BFS results table - source {source}:");
             Console.WriteLine(bfsResultsCSV);
+            Console.WriteLine(bfsPathDistTupleString);
+            Console.WriteLine($"discovery ratio: {bfsDiscoverRatio}");
+            Console.WriteLine();
             ResultsToDesktop(bfsResultsCSV, "bfs.csv");
 
 
@@ -48,17 +60,34 @@ namespace AGT
                 (WeightedDigraph)graph, 
                 source, 
                 target, 
-                Vertex.GetScaledManhattenDist()
-            );
+                Vertex.GetScaledManhattenDist());
             var aStarResCSV = Algorithms.AStarResultTableAsCSV(aStarRes);
             var aStarResPath = Algorithms.FormatPathDistanceTuple(Algorithms.PathDistTupleFromSPResult(aStarRes, target));
+            var aStarDiscoveryRatio = DiscoveryRatio(aStarRes.sourceDistances);
             Console.WriteLine($"A* from {source} to {target}");
             Console.WriteLine(aStarResCSV);
             Console.WriteLine(aStarResPath);
+            Console.WriteLine($"discovery ratio: {aStarDiscoveryRatio}");
+            Console.WriteLine();
             ResultsToDesktop(aStarResCSV, "aStar.csv");
+
+
+            ////////////////////////////////////////////////////////////////////////////////
+            /// IDA*
+            ////////////////////////////////////////////////////////////////////////////////
+            var iDAStarRes = Algorithms.IDAStar(
+                (WeightedDigraph) graph, 
+                source, 
+                target, 
+                Vertex.GetScaledManhattenDist());
+            var iDAStarResPath = Algorithms.FormatPathDistanceTuple((iDAStarRes.path, iDAStarRes.distance));
+            var iDAStarDiscoveryRatio = DiscoveryRatio(iDAStarRes.sourceDistances);
+            Console.WriteLine($"IDA* from {source} to {target}");
+            Console.WriteLine(iDAStarResPath);
+            Console.WriteLine($"discovery ratio: {iDAStarDiscoveryRatio}");
         }
 
-        public static Graph GetChessGraph(Func<Vertex, IEnumerable<Vertex>> DiscoverPossibleMovesAsNodes, ChessPosition chessPieceStartPosition)
+        private static Graph GetChessGraph(Func<Vertex, IEnumerable<Vertex>> DiscoverPossibleMovesAsNodes, ChessPosition chessPieceStartPosition)
         {
             AdjacencyList adjacencyList = new AdjacencyList();
             HashSet<Vertex> vertices = new HashSet<Vertex>();
@@ -84,15 +113,15 @@ namespace AGT
             return new WeightedDigraph(vertices, adjacencyList, null);
         }
 
-        public static Vertex NewVertice(ChessPosition position)
+        private static Vertex NewVertice(ChessPosition position)
         {
-            string name = (nodeCounter++).ToString();
+            string name = (vertexCounter++).ToString();
             Vertex newNode = new Vertex(name, position);
-            nodes.Add(newNode);
+            vertices.Add(newNode);
             return newNode;
         }
 
-        public static IEnumerable<Vertex> KnightMovesAsNodes(Vertex startingNode)
+        private static IEnumerable<Vertex> KnightMovesAsNodes(Vertex startingNode)
         {
             List<Vertex> movesAsNodes = new List<Vertex>();
             ChessPosition pos = startingNode.Position;
@@ -173,7 +202,7 @@ namespace AGT
             (bool exists, Vertex existingNode) NodeForPosExists(ChessPosition positionToTest)
             {
                 Vertex dummy = new Vertex("phyack", positionToTest);
-                var candidates = nodes.Where(node => dummy.Equals(node));
+                var candidates = vertices.Where(node => dummy.Equals(node));
                 if (candidates.Any())
                 {
                     return (true, candidates.First());
@@ -185,7 +214,14 @@ namespace AGT
             }
         }
 
-        public static void ResultsToDesktop(string results, string filename)
+        private static double DiscoveryRatio(Dictionary<Vertex, double> sourceDistances)
+        {
+            int discoveries = sourceDistances.Where(kvp => kvp.Value != double.PositiveInfinity).Count();
+            int total = sourceDistances.Count();
+            return ((double)discoveries) / total;
+        }
+
+        private static void ResultsToDesktop(string results, string filename)
         {
             try
             {

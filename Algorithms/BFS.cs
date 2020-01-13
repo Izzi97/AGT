@@ -8,9 +8,9 @@ namespace AGT
 {
     public static partial class Algorithms
     {
-        public static Dictionary<Vertex, (Vertex predecessor, int rootDistance, int index)> BFS(Graph graph, Vertex startVertice)
+        public static Dictionary<Vertex, (Vertex predecessor, double sourceDistance, int index)> BFS(Graph graph, Vertex source, Vertex target)
         {
-            if (!graph.Vertices.Contains(startVertice)) throw new ArgumentException("start vertex not contained in vertice set of graph");
+            if (!graph.Vertices.Contains(source)) throw new ArgumentException("start vertex not contained in vertice set of graph");
 
             Vertex[] vertsTmp = new Vertex[graph.Vertices.Count()];
             graph.Vertices.ToList().CopyTo(vertsTmp);
@@ -18,15 +18,12 @@ namespace AGT
             var adjacencyList = graph.AdjacencyList;
             var queue = new Queue<Vertex>();
 
-            queue.Enqueue(startVertice);
-            vertices = vertices.Except(startVertice);
+            queue.Enqueue(source);
+            vertices = vertices.Except(source);
 
-            int rootDistance = 0;
+            int sourceDistance = 0;
             int index = 1;
-            var result = new Dictionary<Vertex, (Vertex predecessor, int rootDistance, int index)>
-            {
-                { startVertice, (null, rootDistance, index) }
-            };
+            Dictionary<Vertex, (Vertex predecessor, double sourceDistance, int index)> result = InitResult(graph, source);
 
             while (queue.Count != 0)
             {
@@ -39,17 +36,25 @@ namespace AGT
                     {
                         queue.Enqueue(neighbour);
                         vertices = vertices.Except(neighbour);
-                        result.Add(neighbour, (head, rootDistance + 1, ++index));
+                        result[neighbour] = (head, sourceDistance + 6, ++index);
+                        if (Equals(neighbour, target)) return result;
                     }
                 }
 
-                rootDistance++;
+                sourceDistance += 6;
             }
 
             return result;
+
+            Dictionary<Vertex, (Vertex predecessor, double sourceDistance, int index)> InitResult(Graph g, Vertex s)
+            {
+                Dictionary<Vertex, (Vertex predecessor, double sourceDistance, int index)> output = new Dictionary<Vertex, (Vertex, double, int)>();
+                foreach (Vertex v in g.Vertices) output.Add(v, (null, Equals(v, s) ? 0 : double.PositiveInfinity, -1));
+                return output;
+            }
         }
 
-        public static string BFSResultAsCSV(Dictionary<Vertex, (Vertex predecessor, int rootDistance, int index)> bfsResult)
+        public static string BFSResultAsCSV(Dictionary<Vertex, (Vertex predecessor, double sourceDistance, int index)> bfsResult)
         {
             var resultBuilder = new StringBuilder();
             resultBuilder.AppendLine("vertice;predecessor;root_distance;index");
@@ -60,9 +65,9 @@ namespace AGT
             {
                 string vertice = kvp.Key.ToString();
                 string predecessor = !Equals(kvp.Value.predecessor, null) ? kvp.Value.predecessor.ToString() : "nil";
-                string root_dist = kvp.Value.rootDistance.ToString();
+                string sourceDist = kvp.Value.sourceDistance.ToString();
                 string index = kvp.Value.index.ToString();
-                resultBuilder.AppendLine($"{vertice};{predecessor};{root_dist};{index}");
+                resultBuilder.AppendLine($"{vertice};{predecessor};{sourceDist};{index}");
             }
 
             return resultBuilder.ToString();

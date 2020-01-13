@@ -33,7 +33,7 @@ namespace AGT
             outputBuilder.Remove(outputBuilder.Length - 4, 4);
             outputBuilder.AppendLine();
 
-            outputBuilder.AppendLine($"length: {pathDistanceTuple.distance}");
+            outputBuilder.Append($"length: {pathDistanceTuple.distance}");
 
             return outputBuilder.ToString();
         }
