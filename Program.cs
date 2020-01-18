@@ -33,58 +33,71 @@ namespace AGT
 
 
             ////////////////////////////////////////////////////////////////////////////////
-            /// BFS
-            ////////////////////////////////////////////////////////////////////////////////
-            var bfsResult = Algorithms.BFS(graph, source, target);
-            var bfsResultsCSV = Algorithms.BFSResultAsCSV(bfsResult);
-
-            var p = new Dictionary<Vertex, Vertex>(bfsResult.Select(kvp => new KeyValuePair<Vertex, Vertex>(kvp.Key, kvp.Value.predecessor)));
-            var d = new Dictionary<Vertex, double>(bfsResult.Select(kvp => new KeyValuePair<Vertex, double>(kvp.Key, kvp.Value.sourceDistance)));
-            var bfsDiscoverRatio = DiscoveryRatio(d);
-
-            var bfsPathDistTuple = Algorithms.PathDistTupleFromSPResult((p, d), target);
-            var bfsPathDistTupleString = Algorithms.FormatPathDistanceTuple(bfsPathDistTuple);
-
-            Console.WriteLine($"BFS results table - source {source}:");
-            Console.WriteLine(bfsResultsCSV);
-            Console.WriteLine(bfsPathDistTupleString);
-            Console.WriteLine($"discovery ratio: {bfsDiscoverRatio}");
-            Console.WriteLine();
-            ResultsToDesktop(bfsResultsCSV, "bfs.csv");
-
-
-            ////////////////////////////////////////////////////////////////////////////////
             /// A*
             ////////////////////////////////////////////////////////////////////////////////
-            var aStarRes = Algorithms.AStar(
-                (WeightedDigraph)graph, 
-                source, 
-                target, 
-                Vertex.GetScaledManhattenDist());
-            var aStarResCSV = Algorithms.AStarResultTableAsCSV(aStarRes);
-            var aStarResPath = Algorithms.FormatPathDistanceTuple(Algorithms.PathDistTupleFromSPResult(aStarRes, target));
-            var aStarDiscoveryRatio = DiscoveryRatio(aStarRes.sourceDistances);
-            Console.WriteLine($"A* from {source} to {target}");
-            Console.WriteLine(aStarResCSV);
-            Console.WriteLine(aStarResPath);
-            Console.WriteLine($"discovery ratio: {aStarDiscoveryRatio}");
-            Console.WriteLine();
-            ResultsToDesktop(aStarResCSV, "aStar.csv");
+            ExecuteAStar(graph, source, target, (v, w) => 0.0, "astar_0");
+            ExecuteAStar(graph, source, target, Vertex.GetScaledManhattenDist(2.0), "astar_manhattendist");
+            ExecuteAStar(graph, source, target, Vertex.GetScaledEuclideanMax(3.0), "astar_euclidmax");
+
+
+            ////////////////////////////////////////////////////////////////////////////////
+            /// BFS
+            ////////////////////////////////////////////////////////////////////////////////
+            ExecuteBFS(graph, source, target);
 
 
             ////////////////////////////////////////////////////////////////////////////////
             /// IDA*
             ////////////////////////////////////////////////////////////////////////////////
+            ExecuteIDAStar(graph, source, target, (v, w) => 0.0, "idastar_0");
+            ExecuteIDAStar(graph, source, target, Vertex.GetScaledManhattenDist(2.0), "idastar_manhattendist");
+            ExecuteIDAStar(graph, source, target, Vertex.GetScaledEuclideanMax(3.0), "idastar_euclidmax");
+        }
+
+        private static void ExecuteAStar(Graph graph, Vertex source, Vertex target, Func<Vertex, Vertex, double> heuristic, string filename)
+        {
+            var aStarRes = Algorithms.AStar(
+                (WeightedDigraph)graph,
+                source,
+                target,
+                heuristic);
+            var aStarResCSV = Algorithms.AStarResultTableToExcel(aStarRes);
+            var aStarResPath = Algorithms.FormatPathDistanceTuple(Algorithms.PathDistTupleFromSPResult(aStarRes.predecessors, aStarRes.sourceDistances, target));
+            Console.WriteLine($"A* from {source} to {target}");
+            Console.WriteLine(aStarResCSV);
+            Console.WriteLine(aStarResPath);
+            Console.WriteLine();
+            ResultsToDesktop(aStarResCSV, $"{filename}.csv");
+        }
+
+        private static void ExecuteBFS(Graph graph, Vertex source, Vertex target)
+        {
+            var bfsResult = Algorithms.BFS(graph, source, target);
+            var bfsResultsCSV = Algorithms.BFSResultToExcel(bfsResult);
+
+            var bfsPathDistTuple = Algorithms.PathDistTupleFromSPResult(bfsResult.predecessors, bfsResult.sourceDistances, target);
+            var bfsPathDistTupleString = Algorithms.FormatPathDistanceTuple(bfsPathDistTuple);
+
+            Console.WriteLine($"BFS results table - source {source}:");
+            Console.WriteLine(bfsResultsCSV);
+            Console.WriteLine(bfsPathDistTupleString);
+            Console.WriteLine();
+            ResultsToDesktop(bfsResultsCSV, "bfs.csv");
+        }
+
+        private static void ExecuteIDAStar(Graph graph, Vertex source, Vertex target, Func<Vertex, Vertex, double> heuristic, string filename)
+        {
             var iDAStarRes = Algorithms.IDAStar(
-                (WeightedDigraph) graph, 
-                source, 
-                target, 
-                Vertex.GetScaledManhattenDist());
+                (WeightedDigraph)graph,
+                source,
+                target,
+                heuristic);
+            var iDAStarResCsv = Algorithms.IDAStarResultTableToExcel(iDAStarRes);
             var iDAStarResPath = Algorithms.FormatPathDistanceTuple((iDAStarRes.path, iDAStarRes.distance));
-            var iDAStarDiscoveryRatio = DiscoveryRatio(iDAStarRes.sourceDistances);
             Console.WriteLine($"IDA* from {source} to {target}");
+            Console.WriteLine(iDAStarResCsv);
             Console.WriteLine(iDAStarResPath);
-            Console.WriteLine($"discovery ratio: {iDAStarDiscoveryRatio}");
+            ResultsToDesktop(iDAStarResCsv, $"{filename}.csv");
         }
 
         private static Graph GetChessGraph(Func<Vertex, IEnumerable<Vertex>> DiscoverPossibleMovesAsNodes, ChessPosition chessPieceStartPosition)

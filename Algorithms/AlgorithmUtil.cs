@@ -7,7 +7,8 @@ namespace AGT
     public static partial class Algorithms
     {
         public static (IEnumerable<Vertex> path, double distance) PathDistTupleFromSPResult(
-            (Dictionary<Vertex, Vertex> predecessors, Dictionary<Vertex, double> sourceDistances) spResult, 
+            Dictionary<Vertex, Vertex> predecessors,
+            Dictionary<Vertex, double> sourceDistances, 
             Vertex target)
         {
             List<Vertex> path = new List<Vertex>();
@@ -16,12 +17,12 @@ namespace AGT
             while (!Equals(cursor, null))
             {
                 path.Add(cursor);
-                cursor = spResult.predecessors[cursor];
+                cursor = predecessors[cursor];
             }
 
             path.Reverse();
 
-            return (path, spResult.sourceDistances[target]);
+            return (path, sourceDistances[target]);
         }
 
         public static string FormatPathDistanceTuple((IEnumerable<Vertex> path, double distance) pathDistanceTuple)

@@ -8,7 +8,7 @@ namespace AGT
 {
     public static partial class Algorithms
     {
-        public static (Dictionary<Vertex, Vertex> predecessors, Dictionary<Vertex, double> sourceDistances) AStar(WeightedDigraph graph, Vertex source, Vertex target, Func<Vertex, Vertex, double> heuristic)
+        public static (Dictionary<Vertex, Vertex> predecessors, Dictionary<Vertex, double> sourceDistances, int queuedVertices, int processedVertices) AStar(WeightedDigraph graph, Vertex source, Vertex target, Func<Vertex, Vertex, double> heuristic)
         {
             if (!graph.Vertices.Contains(source)) throw new ArgumentException("source vertex not contained in vertice set of graph");
 
@@ -24,6 +24,7 @@ namespace AGT
             while (!processedVertices.Contains(target))
             {
                 Vertex vertex = GetNextVertex(sourceDistances, heuristic, target, remainingVertices);
+
                 processedVertices = processedVertices.Concat(vertex);
                 remainingVertices.Remove(vertex);
 
@@ -41,23 +42,20 @@ namespace AGT
                 }
             }
 
-            return (predecessors, sourceDistances);
+            return (predecessors, sourceDistances, sourceDistances.Where(kvp => kvp.Value != double.PositiveInfinity).Select(kvp => kvp.Key).Except(processedVertices).Count(), processedVertices.Count());
 
             Vertex GetNextVertex(Dictionary<Vertex, double> dists, Func<Vertex, Vertex, double> heur, Vertex t, IEnumerable<Vertex> remainingVerts)
             {
-                Vertex min = remainingVerts.First();
-                double dRef = double.PositiveInfinity;
-                foreach (Vertex v in remainingVerts)
+                Vertex min = remainingVerts.Aggregate((v1, v2) =>
                 {
-                    if (
-                        (dists[v] + heur(v, t) < dRef)
-                        || (dists[v] + heur(v, t) == dRef && v < min)
-                    )
+                    if (dists[v1] + heur(v1, t) < dists[v2] + heur(v2, t)) return v1;
+                    else
                     {
-                        min = v;
-                        dRef = dists[v];
+                        if (dists[v1] + heur(v1, t) == dists[v2] + heur(v2, t)) return v1 < v2 ? v1 : v2;
+                        else return v2;
                     }
-                }
+                });
+
                 return min;
             }
 
@@ -80,16 +78,21 @@ namespace AGT
             }
         }
 
-        public static string AStarResultTableAsCSV((Dictionary<Vertex, Vertex> predecessors, Dictionary<Vertex, double> sourceDistances) aStarResult)
+        public static string AStarResultTableToExcel((Dictionary<Vertex, Vertex> predecessors, Dictionary<Vertex, double> sourceDistances, int discoveredVertsCnt, int processedVertsCnt) aStarResult)
         {
             StringBuilder resultBuilder = new StringBuilder();
-            resultBuilder.AppendLine("vertice;predecessor;source_distance");
+            resultBuilder.AppendLine("vertex;predecessor;source_distance");
 
             foreach (Vertex v in aStarResult.predecessors.Keys)
             {
                 string predecessor = !Equals(aStarResult.predecessors[v], null) ? aStarResult.predecessors[v].ToString() : "nil";
                 resultBuilder.AppendLine($"{v};{predecessor};{aStarResult.sourceDistances[v]}");
             }
+
+            resultBuilder
+                .AppendLine()
+                .AppendLine("vertices_remaining_queue;vertices_processed")
+                .AppendLine($"{aStarResult.discoveredVertsCnt};{aStarResult.processedVertsCnt}");
 
             return resultBuilder.ToString();
         }

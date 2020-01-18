@@ -8,7 +8,14 @@ namespace AGT
 {
     public static partial class Algorithms
     {
-        public static Dictionary<Vertex, (Vertex predecessor, double sourceDistance, int index)> BFS(Graph graph, Vertex source, Vertex target)
+        public static (
+            Dictionary<Vertex, Vertex> predecessors, 
+            Dictionary<Vertex, double> sourceDistances, 
+            Dictionary<Vertex, int> index, 
+            int queuedVerticesCnt, 
+            int processedVerticesCnt
+        )
+        BFS(Graph graph, Vertex source, Vertex target)
         {
             if (!graph.Vertices.Contains(source)) throw new ArgumentException("start vertex not contained in vertice set of graph");
 
@@ -17,17 +24,19 @@ namespace AGT
             IEnumerable<Vertex> vertices = vertsTmp;
             var adjacencyList = graph.AdjacencyList;
             var queue = new Queue<Vertex>();
+            var processedVerts = new List<Vertex>();
+
+            var result = InitResult(graph, source);
 
             queue.Enqueue(source);
             vertices = vertices.Except(source);
 
-            int sourceDistance = 0;
             int index = 1;
-            Dictionary<Vertex, (Vertex predecessor, double sourceDistance, int index)> result = InitResult(graph, source);
 
             while (queue.Count != 0)
             {
                 var head = queue.Dequeue();
+                processedVerts.Add(head);
                 var neighbours = adjacencyList.GetNeighboursFor(head);
 
                 foreach (var neighbour in neighbours)
@@ -36,39 +45,62 @@ namespace AGT
                     {
                         queue.Enqueue(neighbour);
                         vertices = vertices.Except(neighbour);
-                        result[neighbour] = (head, sourceDistance + 6, ++index);
-                        if (Equals(neighbour, target)) return result;
+                        result.predecessors[neighbour] = head;
+                        result.sourceDistances[neighbour] = result.sourceDistances[head] + 6;
+                        result.index[neighbour] = ++index;
+
+                        if (Equals(neighbour, target))
+                        {
+                            result.queuedVerticesCnt = queue.Count();
+                            result.processedVertsCnt = processedVerts.Count();
+                            return result;
+                        }
                     }
                 }
-
-                sourceDistance += 6;
             }
 
+            result.queuedVerticesCnt = queue.Count();
+            result.processedVertsCnt = processedVerts.Count();
             return result;
 
-            Dictionary<Vertex, (Vertex predecessor, double sourceDistance, int index)> InitResult(Graph g, Vertex s)
+            (
+            Dictionary<Vertex, Vertex> predecessors,
+            Dictionary<Vertex, double> sourceDistances,
+            Dictionary<Vertex, int> index,
+            int queuedVerticesCnt,
+            int processedVertsCnt
+            ) 
+            InitResult(Graph g, Vertex s)
             {
-                Dictionary<Vertex, (Vertex predecessor, double sourceDistance, int index)> output = new Dictionary<Vertex, (Vertex, double, int)>();
-                foreach (Vertex v in g.Vertices) output.Add(v, (null, Equals(v, s) ? 0 : double.PositiveInfinity, -1));
+                (Dictionary<Vertex, Vertex> predecessors, Dictionary<Vertex, double> sourceDistances, Dictionary<Vertex, int> index, int queuedVerticesCnt, int processedVertsCnt) output =
+                    (new Dictionary<Vertex, Vertex>(), new Dictionary<Vertex, double>(), new Dictionary<Vertex, int>(), 0, 0);
+                foreach (Vertex v in g.Vertices)
+                {
+                    output.predecessors[v] = null;
+                    output.sourceDistances[v] = Equals(v, s) ? 0 : double.PositiveInfinity;
+                    output.index[v] = Equals(v, s) ? 0 : -1;
+                }
+
                 return output;
             }
         }
 
-        public static string BFSResultAsCSV(Dictionary<Vertex, (Vertex predecessor, double sourceDistance, int index)> bfsResult)
+        public static string BFSResultToExcel((Dictionary<Vertex, Vertex> predecessors, Dictionary<Vertex, double> sourceDistances, Dictionary<Vertex, int> index, int queuedVerticesCnt, int processedVertsCnt) bfsResult)
         {
             var resultBuilder = new StringBuilder();
-            resultBuilder.AppendLine("vertice;predecessor;root_distance;index");
+            resultBuilder.AppendLine("vertex;predecessor;source_distance;index");
 
-            var verticeMappingList = bfsResult.ToList();
-
-            foreach (var kvp in verticeMappingList)
+            foreach (Vertex v in bfsResult.predecessors.Keys)
             {
-                string vertice = kvp.Key.ToString();
-                string predecessor = !Equals(kvp.Value.predecessor, null) ? kvp.Value.predecessor.ToString() : "nil";
-                string sourceDist = kvp.Value.sourceDistance.ToString();
-                string index = kvp.Value.index.ToString();
-                resultBuilder.AppendLine($"{vertice};{predecessor};{sourceDist};{index}");
+                string predecessor = !Equals(bfsResult.predecessors[v], null) ? bfsResult.predecessors[v].ToString() : "nil";
+                string sourceDist = bfsResult.sourceDistances[v].ToString();
+                string index = bfsResult.index[v].ToString();
+                resultBuilder.AppendLine($"{v};{predecessor};{sourceDist};{index}");
             }
+            resultBuilder
+                .AppendLine()
+                .AppendLine("vertices_discovered;vertices_processed")
+                .AppendLine($"{bfsResult.queuedVerticesCnt};{bfsResult.processedVertsCnt}");
 
             return resultBuilder.ToString();
         }

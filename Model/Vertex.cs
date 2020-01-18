@@ -23,6 +23,16 @@ namespace AGT.Model
             };
         }
 
+        public static Func<Vertex, Vertex, double> GetScaledEuclideanMax(double scale = 1.0)
+        {
+            return (Vertex from, Vertex to) =>
+            {
+                double dx = Math.Abs(to.Position.X - from.Position.X);
+                double dy = Math.Abs(to.Position.Y - from.Position.Y);
+                return scale * Math.Max(dx, dy);
+            };
+        }
+
         public override string ToString()
         {
             return $"v{Name.ToString()}@{Position.ToString()}";

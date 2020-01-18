@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using AGT.Model;
 
 namespace AGT
@@ -66,6 +68,24 @@ namespace AGT
                 }
                 return output;
             }
+        }
+
+        public static string IDAStarResultTableToExcel((bool found, IEnumerable<Vertex> path, double distance, Dictionary<Vertex, double> sourceDistances) IDAStarResult)
+        {
+            var outputBuilder = new StringBuilder();
+            outputBuilder.AppendLine("vertex;source_distance");
+            
+            foreach (var kvp in IDAStarResult.sourceDistances)
+            {
+                outputBuilder.AppendLine($"{kvp.Key};{kvp.Value}");
+            }
+
+            outputBuilder
+                .AppendLine()
+                .AppendLine("vertices_traversed;vertices_total")
+                .AppendLine($"{IDAStarResult.sourceDistances.Where(kvp => kvp.Value != double.PositiveInfinity).Count()};{IDAStarResult.sourceDistances.Count()}");
+
+            return outputBuilder.ToString();
         }
     }
 }
