@@ -1,0 +1,209 @@
+\documentclass[10pt,a4paper,landscape]{article}
+\usepackage[headheight=14pt,left=0.55cm,right=0.55cm,top=1.10cm,bottom=0.55cm,landscape,
+headsep=2mm]{geometry}
+
+\usepackage{lastpage}
+\usepackage{fancyhdr}
+\usepackage{multicol}
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx}
+\usepackage{wrapfig}
+\usepackage{enumitem}
+\usepackage{titlesec}
+\usepackage{tabularx}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{todonotes}
+\usepackage{amsmath}
+\usepackage{amssymb}
+
+
+% Header
+\pagestyle{fancy}
+\fancyhead{}
+\fancyfoot{}
+\fancyhead[L]{Zusammenfassung Algorithmische Graphentheorie WiSe 2019/2020}
+\fancyhead[R]{Seite $\thepage$ von $\pageref{LastPage}$}
+\fancyheadoffset{0cm}
+
+% Document
+\setlength{\columnseprule}{0.5pt}
+\setlength{\topskip}{10pt}
+%\setlist{nosep}
+
+\titleformat*{\section}{\normalsize\bfseries}
+\titleformat*{\subsection}{\small\bfseries}
+\titleformat*{\subsubsection}{\small\bfseries}
+\titleformat*{\paragraph}{\bfseries}
+\titleformat*{\subparagraph}{\bfseries}
+
+\titlespacing*{\section}
+{4pt}{4pt}{4pt}
+\titlespacing*{\subsection}
+{4pt}{4pt}{4pt}
+\titlespacing*{\subsubsection}
+{4pt}{4pt}{4pt}
+\titlespacing*{\paragraph}
+{4pt}{4pt}{8pt}
+
+\newcolumntype{P}[1]{>{\centering\arraybackslash}p{#1}}
+\newcolumntype{M}[1]{>{\centering\arraybackslash}m{#1}}
+
+\makeatletter
+\newcommand{\xRightarrow}[2][]{\ext@arrow 0359\Rightarrowfill@{#1}{#2}}
+\makeatother
+
+% Building blocks
+\newcommand{\heading}[1]{\noindent\section*{\framebox[\columnwidth][l]{#1}}}
+\newcommand{\subheading}[1]{\noindent\subsection*{\framebox[\columnwidth][l]{#1}}}
+\newcommand{\subsubheading}[1]{\noindent\framebox[\columnwidth][l]{#1}}
+\newcommand{\ccontent}[1]{\parbox{\columnwidth}{\centering{#1}}}
+
+\newenvironment{allesInCode}{\ttfamily}{\par}
+
+
+% Content
+\begin{document}
+	\begin{multicols*}{3}
+        \tiny
+
+        
+        \section{ Grundlagen }
+            \subsection{ Graphen und Digraphen }
+            
+            \paragraph*{ Graph G }
+            \[ G = (V,E) \]
+            wobei $V$ eine endliche, nichtleere Menge an Knoten oder Ecken (Vertices) und $E$ eine Menge Kanten (Edges) 
+            , gegeben durch ungeordnete Paare von Knoten $(v,w) v, w \in V$, ist.
+            
+            \paragraph*{ Digraph D }
+            \[ D = (V,A)\]
+            wobei $V$ eine endliche, nichtleere Menge an Knoten oder Ecken (Vertices) und $A$ eine Menge von gerichteten 
+            Bögen (Arcs) $A \subseteq V \times V$ ist.
+
+            \paragraph*{ Grad } eines Knotens $v$: \\
+            $deg(v) :=$ Grad von v - Anzahl zu Knoten $v$ inzidenter (benachbarter) Kanten in einem Graphen \\
+            $deg_{+}(v), deg_{in}(v) :=$ Eingangsgrad von $v$ - Anzahl aller auf $v$ zeigenden Bögen in einem Digraphen \\
+            $deg_{-}(v), deg_{out}(v) :=$ Ausgangsgrad von $v$ - Anzahl aller von $v$ ausgehenden Bögen in einem Digraphen 
+
+            \paragraph*{ Kantenzug/Kette/Pfad P }
+            \[ P = (v_0, e_1, v_1, e_2, v_2, \dots, e_k, v_k), v_i \in V, e_i \in E \]
+            ist eine Sequenz zusammenhängender Kanten. 
+            \paragraph*{ Weg } ist ein Kantenzug, bei dem alle Kanten (paarweise) verschieden sind, also keine wiederholt wird.
+            \paragraph*{ Kreis/Zyklus } ist ein geschlossener Weg mit identischem Start und Zielknoten.
+
+            \paragraph*{ vollständiger Graph $K_{n}$ } ist der Graph aus $n$ Knoten, der jeden Knoten mit jedem anderen Knoten verbindet.
+            \paragraph*{ bipartiter Graph G } $V$ kann in zwei disjunkte Teilmengen $V_1$ und $V_2$ aufgeteilt werden, sodass jede Kante einen 
+            Endpunkt in $V_1$ und $V_2$ hat.
+            \paragraph*{ Satz von König }
+            Ein Graph ist genau dann bipartit, wenn er keinen Kreis ungerader Länge enthält.
+
+            \subsection{ Bäume und Wälder }
+            \paragraph*{ Wald $F$ } ist ein Graph, der keinen Kreis enthält.
+            \paragraph*{ Baum $T$ in einem Graphen $G$ } ist ein zusammenhängender Wald. $T$ heißt aufspannend, wenn er alle Knoten von $G$ enthält. 
+
+            \subsection{ Handshaking-Lemma }
+            In einem Graphen $G = (V, E)$ gilt:
+            \[ \sum_{v\in V} deg(v) = 2|E| \]
+            Daraus folgt implizit, dass die Anzahl der Knoten mit ungeradem Grad gerade ist.
+
+            \subsection{ Planare Graphen }
+            Ein planarer Graph kann auf einer zweidimensionalen Fläche so kreuzungsfrei gezeichnet werden. Jeder Kreis, 
+            jeder Baum und der vollständige Graph $K_4$ sind planar. Der vollständige Graph $K_5$ und der vollständige 
+            bipartite Graph $K_{3,3}$ sind nicht planar.
+            \paragraph*{ Satz von Kurtowski } ein Graph ist genau dann nicht planar, wenn er durch Kontraktion von Kanten 
+            in den $K_5$ oder den $K_{3,3}$ überführt werden kann.
+            \paragraph*{ Eulersche Polyederformel }
+            \[ n - m + f = 2 \]
+            wobei $n$ die Anzahl der Knoten, $m$ die Anzahl der Kanten und $f$ die Anzahl der Flächen in einem 
+            zusammenhängenden planaren Graphen ist. \\
+            Für nicht zusammenhängende Graphen gilt
+            \[ n - m + f = k + 1 \]
+            wobei $k$ die Anzahl der Zusammenhangskomponenten ist. \\
+            Aus der Polyederformel folgt unmittelbar für planare Graphen aus 3 oder mehr Knoten:
+            \[ m \leq 3n - 6 \]
+            \[ f \leq 2n - 4 \]
+            Ist der Graph außerdem noch bipartit gilt für die Anzahl der Kanten:
+            \[ m \leq 2n - 4 \]
+            Insbesondere hat jeder planare Graph mindestens einen Knoten von Grad höchstens 5.
+
+            \subsection{ Topologische Sortierung }
+            Eine topologische Sortierung eines Digraphen $D = (V,A)$ ist eine injektive Abbildung 
+            $f:V\Rightarrow \mathbb{N}$, sodass gilt:
+            \[ (v,w)\in A \Rightarrow f(v) < f(w) \]
+            Ein Digraph hat genau dann eine topologische Sortierung, wenn er keinen gerichteten Kreis enthält.
+            \paragraph*{ TopSort }
+            \begin{verbatim}
+                input: ein beliebiger Digraph
+                ouput: eine topologische Sortierung f oder die Aussage, dass ein Kreis vorliegt
+
+                index = 0
+
+                while( es ist ein Knoten v mit Eingangsgrad > 0 vorhanden )
+                    entferne v und aktualisiere die Eingangsgrade seiner Nachbarn
+                    setze die topologische Sortierung f von v auf index
+                    erhöhe index um 1
+
+                if( es sind noch Knoten übrig )
+                    return false, es liegt ein Kreis vor
+                else 
+                    return topologische Sortierung f
+            \end{verbatim}
+
+        \section{ Suche in Graphen }
+            \subsection{ Breitensuche (BFS) }
+
+            \subsection{ Tiefensuche (DFS) }
+
+
+        \section{ Minimal aufspannende Bäume }
+            \subsection{ Definition } \todo{ umbenennen }
+
+            \subsection{ Kruskal }
+
+            \subsection{ Prim }
+
+
+        \section{ Kürzeste Wege }
+            \subsection{ Bellmansches Optimierungskriterium }
+
+            \subsection{ Dijkstra }
+
+            \subsection{ Moore-Bollman-Ford }
+
+            \subsection{ A* }
+
+            \subsection{ Dynamische Programmierung - Rucksackproblem }
+
+        \section{ Flüsse in Netzwerken }
+            \subsection{ Max-Flow-Min-Cut-Theorem }\subsection{  }
+
+            \subsection{ Edmonds-Karp }
+
+            \subsection{ Push-Relabel }
+
+
+        \section{ Matchings }
+            \subsection{ Matchings via augmentierende Wege }
+
+            \subsection{ Blossom-Shrinking }
+
+
+        \section{ Euler- \& Hamiltonkreise }
+            \subsection{ Eulertour \& -kreis}
+
+            \subsection{ Chinesisches Postboten-Problem (CPP) }
+
+            \subsection{ Hamiltonkreis }
+
+            \subsection{ Travelling-Salesman-Problem (TSP) }
+
+
+        \section{ Färbung von Graphen }
+            \subsection{ Färbung planarer Graphen }
+
+            \subsection{ Heuristiken zur Graphenfärbung }
+
+
+    \end{multicols*}
+\end{document}
