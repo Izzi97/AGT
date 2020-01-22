@@ -162,7 +162,7 @@ headsep=2mm]{geometry}
             Außerdem gilt für die Breitensuche: ein zusammenhängender Graph ist genau dann bipartit, wenn es bei der Breitensuche mit beliebigem Startknoten 
             keine Nicht-Baumkante $e$ gibt, die eine Querverbindung im Spannbaum darstellt ($e$ verbindet zwei Baumknoten 
             auf gleicher Höhe des Baumes).
-            \subsection*{ Breitensuche (BFS) }
+            \subsection{ Breitensuche (BFS) }
             \begin{verbatim}
     input:  ein zusammenhängender Graph G, ein Startknoten s
     output: Index der Traversierung, Vorgänger und Abstand von s für 
@@ -170,20 +170,20 @@ headsep=2mm]{geometry}
     
     counter = 1
     index()
-    abstand()
-    vorgänger()
+    distance()
+    predecessor()
     queue
 
     foreach( Knoten v von G )
         if( v = s )
             index(v) = 1
-            abstand(v) = 0
-            vorgänger(v) = undefined
+            distance(v) = 0
+            predecessor(v) = undefined
             füge v in queue ein
         else
             index(v) = undefined
-            abstand(v) = undefined
-            vorgänger(v) = undefined
+            distance(v) = undefined
+            predecessor(v) = undefined
 
     while( queue ist nicht leer )
         v = head(queue)
@@ -191,15 +191,15 @@ headsep=2mm]{geometry}
             markiere w als untersucht
             füge w am Ende der queue ein
             index(w) = ++counter
-            vorgänger(w) = v
-            abstand(w) = abstand(v) + 1
+            predecessor(w) = v
+            distance(w) = distance(v) + 1
         else
             entferne v aus der queue
 
-    return index, vorgänger, abstand
+    return index, predecessor, distance
             \end{verbatim}
             
-            \subsection*{ Tiefensuche (DFS) }
+            \subsection{ Tiefensuche (DFS) }
             \begin{verbatim}
     input:  ein zusammenhängender Graph G, ein Startknoten s
     output: Index der Traversierung, Vorgänger und Abstand von s für 
@@ -207,20 +207,20 @@ headsep=2mm]{geometry}
 
     counter = 1
     index()
-    abstand()
-    vorgänger()
+    distance()
+    predecessor()
     stack
 
     foreach( Knoten v von G )
         if( v = s )
             index(v) = 1
-            abstand(v) = 0
-            vorgänger(v) = undefined
+            distance(v) = 0
+            predecessor(v) = undefined
             lege v auf stack
         else
             index(v) = undefined
-            abstand(v) = undefined
-            vorgänger(v) = undefined
+            distance(v) = undefined
+            predecessor(v) = undefined
 
     while( stack ist nicht leer )
         v = peek(stack)
@@ -228,12 +228,12 @@ headsep=2mm]{geometry}
             markiere w als untersucht
             lege w auf stack
             index(w) = ++counter
-            vorgänger(w) = v
-            abstand(w) = abstand(v) + 1
+            predecessor(w) = v
+            distance(w) = distance(v) + 1
         else
             nimm v von stack
 
-    return index, vorgänger, abstand
+    return index, predecessor, distance
             \end{verbatim}
 
 
@@ -271,22 +271,22 @@ headsep=2mm]{geometry}
     output: ein minimal aufspannender Baum gegeben durch eine 
             Vorgänger-Beziehung
     
-    vorgänger()
-    dist()
+    predecessor()
+    distance()
 
     foreach( Knoten v des Graphen )
-        vorgänger(v) = undefined
+        predecessor(v) = undefined
         if( v = s )
-            dist(v) = 0
+            distance(v) = 0
         else
-            dist(v) = infinity
+            distance(v) = infinity
 
     while( noch nicht alle Knoten erreichbar )
         v = noch nicht erreichbarer Knoten mit minimalem dist(v)
         foreach( noch nicht erreichbarer Nachbar w von v )
-            if( dist(w) > Kantengewicht(v,w) )
-                dist(w) = Kantengewicht(v,w)
-                vorgänger(w) = v
+            if( distance(w) > Kantengewicht(v,w) )
+                distance(w) = Kantengewicht(v,w)
+                predecessor(w) = v
         
         markiere v als erreichbar
             \end{verbatim}
