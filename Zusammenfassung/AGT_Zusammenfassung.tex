@@ -35,8 +35,8 @@ headsep=2mm]{geometry}
 \titleformat*{\section}{\normalsize\bfseries}
 \titleformat*{\subsection}{\small\bfseries}
 \titleformat*{\subsubsection}{\small\bfseries}
-\titleformat*{\paragraph}{\bfseries}
-\titleformat*{\subparagraph}{\bfseries}
+\titleformat*{\subsubsection}{\bfseries}
+%\titleformat*{\subsubsubsection}{\bfseries}
 
 \titlespacing*{\section}
 {4pt}{4pt}{4pt}
@@ -44,8 +44,8 @@ headsep=2mm]{geometry}
 {4pt}{4pt}{4pt}
 \titlespacing*{\subsubsection}
 {4pt}{4pt}{4pt}
-\titlespacing*{\paragraph}
-{4pt}{4pt}{8pt}
+\titlespacing*{\subsubsection}
+{4pt}{6pt}{4pt}
 
 \newcolumntype{P}[1]{>{\centering\arraybackslash}p{#1}}
 \newcolumntype{M}[1]{>{\centering\arraybackslash}m{#1}}
@@ -72,36 +72,36 @@ headsep=2mm]{geometry}
         \section{ Grundlagen }
             \subsection{ Graphen und Digraphen }
             
-            \paragraph*{ Graph G }
+            \subsubsection*{ Graph $G$ }
             \[ G = (V,E) \]
             wobei $V$ eine endliche, nichtleere Menge an Knoten oder Ecken (Vertices) und $E$ eine Menge Kanten (Edges) 
             , gegeben durch ungeordnete Paare von Knoten $(v,w) v, w \in V$, ist.
             
-            \paragraph*{ Digraph D }
+            \subsubsection*{ Digraph $D$ }
             \[ D = (V,A)\]
             wobei $V$ eine endliche, nichtleere Menge an Knoten oder Ecken (Vertices) und $A$ eine Menge von gerichteten 
             Bögen (Arcs) $A \subseteq V \times V$ ist.
 
-            \paragraph*{ Grad } eines Knotens $v$: \\
+            \subsubsection*{ Grad eines Knotens $v$ }
             $deg(v) :=$ Grad von v - Anzahl zu Knoten $v$ inzidenter (benachbarter) Kanten in einem Graphen \\
             $deg_{+}(v), deg_{in}(v) :=$ Eingangsgrad von $v$ - Anzahl aller auf $v$ zeigenden Bögen in einem Digraphen \\
             $deg_{-}(v), deg_{out}(v) :=$ Ausgangsgrad von $v$ - Anzahl aller von $v$ ausgehenden Bögen in einem Digraphen 
 
-            \paragraph*{ Kantenzug/Kette/Pfad P }
+            \subsubsection*{ Kantenzug/Kette/Pfad $P$ }
             \[ P = (v_0, e_1, v_1, e_2, v_2, \dots, e_k, v_k), v_i \in V, e_i \in E \]
             ist eine Sequenz zusammenhängender Kanten. 
-            \paragraph*{ Weg } ist ein Kantenzug, bei dem alle Kanten (paarweise) verschieden sind, also keine wiederholt wird.
-            \paragraph*{ Kreis/Zyklus } ist ein geschlossener Weg mit identischem Start und Zielknoten.
+            \subsubsection*{ Weg } ist ein Kantenzug, bei dem alle Kanten (paarweise) verschieden sind, also keine wiederholt wird.
+            \subsubsection*{ Kreis/Zyklus } ist ein geschlossener Weg mit identischem Start und Zielknoten.
 
-            \paragraph*{ vollständiger Graph $K_{n}$ } ist der Graph aus $n$ Knoten, der jeden Knoten mit jedem anderen Knoten verbindet.
-            \paragraph*{ bipartiter Graph G } $V$ kann in zwei disjunkte Teilmengen $V_1$ und $V_2$ aufgeteilt werden, sodass jede Kante einen 
+            \subsubsection*{ vollständiger Graph $K_{n}$ } ist der Graph aus $n$ Knoten, der jeden Knoten mit jedem anderen Knoten verbindet.
+            \subsubsection*{ bipartiter Graph } Die Knotenmenge $V$ kann in zwei disjunkte Teilmengen $V_1$ und $V_2$ aufgeteilt werden, sodass jede Kante einen 
             Endpunkt in $V_1$ und $V_2$ hat.
-            \paragraph*{ Satz von König }
+            \subsubsection*{ Satz von König }
             Ein Graph ist genau dann bipartit, wenn er keinen Kreis ungerader Länge enthält.
 
             \subsection{ Bäume und Wälder }
-            \paragraph*{ Wald $F$ } ist ein Graph, der keinen Kreis enthält.
-            \paragraph*{ Baum $T$ in einem Graphen $G$ } ist ein zusammenhängender Wald. $T$ heißt aufspannend, wenn er alle Knoten von $G$ enthält. 
+            \subsubsection*{ Wald $F$ } ist ein Graph, der keinen Kreis enthält.
+            \subsubsection*{ Baum $T$ in einem Graphen $G$ } ist ein zusammenhängender Wald. $T$ heißt aufspannend, wenn er alle Knoten von $G$ enthält. 
 
             \subsection{ Handshaking-Lemma }
             In einem Graphen $G = (V, E)$ gilt:
@@ -112,9 +112,9 @@ headsep=2mm]{geometry}
             Ein planarer Graph kann auf einer zweidimensionalen Fläche so kreuzungsfrei gezeichnet werden. Jeder Kreis, 
             jeder Baum und der vollständige Graph $K_4$ sind planar. Der vollständige Graph $K_5$ und der vollständige 
             bipartite Graph $K_{3,3}$ sind nicht planar.
-            \paragraph*{ Satz von Kurtowski } ein Graph ist genau dann nicht planar, wenn er durch Kontraktion von Kanten 
+            \subsubsection*{ Satz von Kurtowski } ein Graph ist genau dann nicht planar, wenn er durch Kontraktion von Kanten 
             in den $K_5$ oder den $K_{3,3}$ überführt werden kann.
-            \paragraph*{ Eulersche Polyederformel }
+            \subsubsection*{ Eulersche Polyederformel }
             \[ n - m + f = 2 \]
             wobei $n$ die Anzahl der Knoten, $m$ die Anzahl der Kanten und $f$ die Anzahl der Flächen in einem 
             zusammenhängenden planaren Graphen ist. \\
@@ -134,11 +134,11 @@ headsep=2mm]{geometry}
             \[ (v,w)\in A \Rightarrow f(v) < f(w) \]
             Ein Digraph hat genau dann eine topologische Sortierung, wenn er keinen gerichteten Kreis enthält.
             \newpage
-            \paragraph*{ TopSort }
+            \subsubsection*{ TopSort }
             \begin{verbatim}
-    input: ein beliebiger Digraph
-    ouput: eine topologische Sortierung f oder die Aussage, 
-           dass ein Kreis vorliegt
+    input:  ein beliebiger Digraph
+    output: eine topologische Sortierung f oder die Aussage, 
+            dass ein Kreis vorliegt
 
     index = 0
 
@@ -154,17 +154,142 @@ headsep=2mm]{geometry}
             \end{verbatim}
 
         \section{ Suche in Graphen }
-            \subsection{ Breitensuche (BFS) }
+            Suchverfahren für Graphen traversieren alle von einem Startknoten $s$ aus erreichbaren Knoten 
+            eines Graphen $G = (V,E)$ nach einem rekursiven Schema. Jedem traversierten Knoten wird sein Index 
+            (Reihenfolge der Traversierung), sein Vorgänger und sein Abstand zum Startknoten $s$ zugeordnet.
+            Aus den Vorgänger-Beziehungen lässt sich ein aufspannender Baum von $G$ mit Wurzel $s$ rekonstruieren.
+            \newline
+            Außerdem gilt für die Breitensuche: ein zusammenhängender Graph ist genau dann bipartit, wenn es bei der Breitensuche mit beliebigem Startknoten 
+            keine Nicht-Baumkante $e$ gibt, die eine Querverbindung im Spannbaum darstellt ($e$ verbindet zwei Baumknoten 
+            auf gleicher Höhe des Baumes).
+            \subsection*{ Breitensuche (BFS) }
+            \begin{verbatim}
+    input:  ein zusammenhängender Graph G, ein Startknoten s
+    output: Index der Traversierung, Vorgänger und Abstand von s für 
+            jeden von s aus erreichbaren Knoten
+    
+    counter = 1
+    index()
+    abstand()
+    vorgänger()
+    queue
 
-            \subsection{ Tiefensuche (DFS) }
+    foreach( Knoten v von G )
+        if( v = s )
+            index(v) = 1
+            abstand(v) = 0
+            vorgänger(v) = undefined
+            füge v in queue ein
+        else
+            index(v) = undefined
+            abstand(v) = undefined
+            vorgänger(v) = undefined
+
+    while( queue ist nicht leer )
+        v = head(queue)
+        if( v hat einen noch nicht untersuchten Nachbarn w )
+            markiere w als untersucht
+            füge w am Ende der queue ein
+            index(w) = ++counter
+            vorgänger(w) = v
+            abstand(w) = abstand(v) + 1
+        else
+            entferne v aus der queue
+
+    return index, vorgänger, abstand
+            \end{verbatim}
+            
+            \subsection*{ Tiefensuche (DFS) }
+            \begin{verbatim}
+    input:  ein zusammenhängender Graph G, ein Startknoten s
+    output: Index der Traversierung, Vorgänger und Abstand von s für 
+            jeden von s aus erreichbaren Knoten
+
+    counter = 1
+    index()
+    abstand()
+    vorgänger()
+    stack
+
+    foreach( Knoten v von G )
+        if( v = s )
+            index(v) = 1
+            abstand(v) = 0
+            vorgänger(v) = undefined
+            lege v auf stack
+        else
+            index(v) = undefined
+            abstand(v) = undefined
+            vorgänger(v) = undefined
+
+    while( stack ist nicht leer )
+        v = peek(stack)
+        if( v hat einen noch nicht untersuchten Nachbarn w )
+            markiere w als untersucht
+            lege w auf stack
+            index(w) = ++counter
+            vorgänger(w) = v
+            abstand(w) = abstand(v) + 1
+        else
+            nimm v von stack
+
+    return index, vorgänger, abstand
+            \end{verbatim}
 
 
         \section{ Minimal aufspannende Bäume }
-            \subsection{ Definition } \todo{ umbenennen }
-
+            Ein minimal aufspannender Baum, ist der aufspannende Baum, mit der kleinsten Gesamtsumme der Kantengewichte.
+            Jeder aufspannende Baum mit $n$ Knoten hat genau $n-1$ Kanten. Entfernt man eine Kante $e$, ist der 
+            aufspannende Baum nicht mehr zusammenhängend, sondern in zwei Zusammenhangskomponenten zerlegt - den zu $e$ 
+            gehörigen Fundamentalschnitt. Fügt man dem aufspannenden Baum eine Kante $k$ hinzu, enthält der Baum nun 
+            einen Kreis - den zu $k$ gehörigen Fundamentalkreis.
             \subsection{ Kruskal }
+            \begin{verbatim}
+    input:  ein zusammenhängender Graph mit Kantengewichten
+    output: ein minimal aufspannender Baum
+
+    sortiere alle Kanten aufsteigend nach ihren Gewichten
+    counter = 0
+    tree
+
+    initialisiere für jeden Knoten v eine Zusammenhangskomponente V, 
+    die nur v enthält
+
+    foreach( Kante e der aufsteigend sortierten Kanten )
+        if( e verbindet zwei unterschiedliche Komponenten V und W )
+            verschmilz V und W
+            füge e zu tree hinzu
+            counter++
+            if( counter = Anzahl aller Knoten - 1 )
+                return tree
+            \end{verbatim}
 
             \subsection{ Prim }
+            \begin{verbatim}
+    input:  ein zusammenhängender Graph mit Kantengewichten, 
+            ein Startknoten s
+    output: ein minimal aufspannender Baum gegeben durch eine 
+            Vorgänger-Beziehung
+    
+    vorgänger()
+    dist()
+
+    foreach( Knoten v des Graphen )
+        vorgänger(v) = undefined
+        if( v = s )
+            dist(v) = 0
+        else
+            dist(v) = infinity
+
+    while( noch nicht alle Knoten erreichbar )
+        v = noch nicht erreichbarer Knoten mit minimalem dist(v)
+        foreach( noch nicht erreichbarer Nachbar w von v )
+            if( dist(w) > Kantengewicht(v,w) )
+                dist(w) = Kantengewicht(v,w)
+                vorgänger(w) = v
+        
+        markiere v als erreichbar
+            \end{verbatim}
 
 
         \section{ Kürzeste Wege }
