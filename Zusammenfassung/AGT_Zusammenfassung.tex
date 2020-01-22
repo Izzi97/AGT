@@ -16,6 +16,7 @@ headsep=2mm]{geometry}
 \usepackage{todonotes}
 \usepackage{amsmath}
 \usepackage{amssymb}
+%\usepackage{showframe}
 
 
 % Header
@@ -64,8 +65,8 @@ headsep=2mm]{geometry}
 
 % Content
 \begin{document}
-	\begin{multicols*}{3}
-        \tiny
+	\begin{multicols*}{2}
+        \normalsize
 
         
         \section{ Grundlagen }
@@ -132,22 +133,24 @@ headsep=2mm]{geometry}
             $f:V\Rightarrow \mathbb{N}$, sodass gilt:
             \[ (v,w)\in A \Rightarrow f(v) < f(w) \]
             Ein Digraph hat genau dann eine topologische Sortierung, wenn er keinen gerichteten Kreis enthält.
+            \newpage
             \paragraph*{ TopSort }
             \begin{verbatim}
-                input: ein beliebiger Digraph
-                ouput: eine topologische Sortierung f oder die Aussage, dass ein Kreis vorliegt
+    input: ein beliebiger Digraph
+    ouput: eine topologische Sortierung f oder die Aussage, 
+           dass ein Kreis vorliegt
 
-                index = 0
+    index = 0
 
-                while( es ist ein Knoten v mit Eingangsgrad > 0 vorhanden )
-                    entferne v und aktualisiere die Eingangsgrade seiner Nachbarn
-                    setze die topologische Sortierung f von v auf index
-                    erhöhe index um 1
+    while( es ist ein Knoten v mit Eingangsgrad > 0 vorhanden )
+        entferne v und aktualisiere die Eingangsgrade seiner Nachbarn
+        setze die topologische Sortierung f von v auf index
+        erhöhe index um 1
 
-                if( es sind noch Knoten übrig )
-                    return false, es liegt ein Kreis vor
-                else 
-                    return topologische Sortierung f
+    if( es sind noch Knoten übrig )
+        return false, es liegt ein Kreis vor
+    else 
+        return topologische Sortierung f
             \end{verbatim}
 
         \section{ Suche in Graphen }
