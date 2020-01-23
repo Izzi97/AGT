@@ -16,7 +16,7 @@ headsep=2mm]{geometry}
 \usepackage{todonotes}
 \usepackage{amsmath}
 \usepackage{amssymb}
-\usepackage{showframe}
+%\usepackage{showframe}
 
 
 % Header
@@ -106,7 +106,7 @@ headsep=2mm]{geometry}
     Daraus folgt implizit, dass die Anzahl der Knoten mit ungeradem Grad gerade ist.
 
     \subsection{ Planare Graphen }
-    Ein planarer Graph kann auf einer zweidimensionalen Fläche so kreuzungsfrei gezeichnet werden. Jeder Kreis, 
+    Ein planarer Graph kann auf einer zweidimensionalen Fläche kreuzungsfrei gezeichnet werden. Jeder Kreis, 
     jeder Baum und der vollständige Graph $K_4$ sind planar. Der vollständige Graph $K_5$ und der vollständige 
     bipartite Graph $K_{3,3}$ sind nicht planar.
     \subsubsection*{ Satz von Kurtowski } ein Graph ist genau dann nicht planar, wenn er durch Kontraktion von Kanten 
@@ -134,20 +134,21 @@ headsep=2mm]{geometry}
     \subsubsection*{ TopSort }
     \begin{verbatim}
 input:  ein beliebiger Digraph
-output: eine topologische Sortierung f oder die Aussage, 
-    dass ein Kreis vorliegt
+output: eine topologische Sortierung, gegeben durch die 
+        Knoten-Index-Beziehung oder die Aussage, dass ein Kreis vorliegt
 
 index = 0
+sort()
 
 while( es ist ein Knoten v mit Eingangsgrad > 0 vorhanden )
-entferne v und aktualisiere die Eingangsgrade seiner Nachbarn
-setze die topologische Sortierung f von v auf index
-erhöhe index um 1
+    entferne v und aktualisiere die Eingangsgrade seiner Nachbarn
+    sort(v) = index
+    index++
 
 if( es sind noch Knoten übrig )
-return false, es liegt ein Kreis vor
+    return false, es liegt ein Kreis vor
 else 
-return topologische Sortierung f
+    return sort
     \end{verbatim}
 
 \section{ Suche in Graphen }
@@ -161,9 +162,10 @@ return topologische Sortierung f
     auf gleicher Höhe des Baumes).
     \subsection{ Breitensuche (BFS) }
     \begin{verbatim}
-input:  ein zusammenhängender Graph G, ein Startknoten s
+input:  ein zusammenhängender Graph G, 
+        ein Startknoten s
 output: Index der Traversierung, Vorgänger und Abstand von s für 
-    jeden von s aus erreichbaren Knoten
+        jeden von s aus erreichbaren Knoten
 
 counter = 1
 index()
@@ -172,26 +174,26 @@ predecessor()
 queue
 
 foreach( Knoten v von G )
-if( v = s )
-    index(v) = 1
-    distance(v) = 0
-    predecessor(v) = undefined
-    füge v in queue ein
-else
-    index(v) = undefined
-    distance(v) = undefined
-    predecessor(v) = undefined
+    if( v = s )
+        index(v) = 1
+        distance(v) = 0
+        predecessor(v) = undefined
+        füge v in queue ein
+    else
+        index(v) = undefined
+        distance(v) = undefined
+        predecessor(v) = undefined
 
 while( queue ist nicht leer )
-v = head(queue)
-if( v hat einen noch nicht untersuchten Nachbarn w )
-    markiere w als untersucht
-    füge w am Ende der queue ein
-    index(w) = ++counter
-    predecessor(w) = v
-    distance(w) = distance(v) + 1
-else
-    entferne v aus der queue
+    v = head(queue)
+    if( v hat einen noch nicht untersuchten Nachbarn w )
+        markiere w als untersucht
+        füge w am Ende der queue ein
+        index(w) = ++counter
+        predecessor(w) = v
+        distance(w) = distance(v) + 1
+    else
+        entferne v aus der queue
 
 return index, predecessor, distance
     \end{verbatim}
@@ -209,26 +211,26 @@ predecessor()
 stack
 
 foreach( Knoten v von G )
-if( v = s )
-    index(v) = 1
-    distance(v) = 0
-    predecessor(v) = undefined
-    lege v auf stack
-else
-    index(v) = undefined
-    distance(v) = undefined
-    predecessor(v) = undefined
+    if( v = s )
+        index(v) = 1
+        distance(v) = 0
+        predecessor(v) = undefined
+        lege v auf stack
+    else
+        index(v) = undefined
+        distance(v) = undefined
+        predecessor(v) = undefined
 
 while( stack ist nicht leer )
-v = peek(stack)
-if( v hat einen noch nicht untersuchten Nachbarn w )
-    markiere w als untersucht
-    lege w auf stack
-    index(w) = ++counter
-    predecessor(w) = v
-    distance(w) = distance(v) + 1
-else
-    nimm v von stack
+    v = peek(stack)
+    if( v hat einen noch nicht untersuchten Nachbarn w )
+        markiere w als untersucht
+        lege w auf stack
+        index(w) = ++counter
+        predecessor(w) = v
+        distance(w) = distance(v) + 1
+    else
+        nimm v von stack
 
 return index, predecessor, distance
     \end{verbatim}
@@ -253,39 +255,38 @@ initialisiere für jeden Knoten v eine Zusammenhangskomponente V,
 die nur v enthält
 
 foreach( Kante e der aufsteigend sortierten Kanten )
-if( e verbindet zwei unterschiedliche Komponenten V und W )
-    verschmilz V und W
-    füge e zu tree hinzu
-    counter++
-    if( counter = Anzahl aller Knoten - 1 )
-        return tree
+    if( e verbindet zwei unterschiedliche Komponenten V und W )
+        verschmilz V und W
+        füge e zu tree hinzu
+        counter++
+        if( counter = Anzahl aller Knoten - 1 )
+            return tree
     \end{verbatim}
 
     \subsection{ Prim }
     \begin{verbatim}
 input:  ein zusammenhängender Graph mit Kantengewichten, 
-    ein Startknoten s
+        ein Startknoten s
 output: ein minimal aufspannender Baum gegeben durch eine 
-    Vorgänger-Beziehung
+        Vorgänger-Beziehung
 
 predecessor()
 distance()
 
 foreach( Knoten v des Graphen )
-predecessor(v) = undefined
-if( v = s )
-    distance(v) = 0
-else
-    distance(v) = infinity
+    predecessor(v) = undefined
+    if( v = s )
+        distance(v) = 0
+    else
+        distance(v) = infinity
 
 while( noch nicht alle Knoten erreichbar )
-v = noch nicht erreichbarer Knoten mit minimalem dist(v)
-foreach( noch nicht erreichbarer Nachbar w von v )
-    if( distance(w) > Kantengewicht(v,w) )
-        distance(w) = Kantengewicht(v,w)
-        predecessor(w) = v
-
-markiere v als erreichbar
+    v = noch nicht erreichbarer Knoten mit minimalem dist(v)
+    foreach( noch nicht erreichbarer Nachbar w von v )
+        if( distance(w) > Kantengewicht(v,w) )
+            distance(w) = Kantengewicht(v,w)
+            predecessor(w) = v
+    markiere v als erreichbar
     \end{verbatim}
 
 
@@ -293,28 +294,28 @@ markiere v als erreichbar
     \subsection{ Dijkstra }
     \begin{verbatim}
 input:  ein gewichteter Digraph mit nichtnegativen Kantengewichten,
-    ein Startknoten s
+        ein Startknoten s
 output: die kürzesten Wege von s zu jedem anderen erreichbaren Knoten, 
-    gegeben durch eine Vorgänger Beziehung,
-    die absoluten Distanzen von s zu jedem anderen Knoten
+        gegeben durch eine Vorgänger Beziehung,
+        die absoluten Distanzen von s zu jedem anderen Knoten
 
 predecessor()
 distance()
 
 foreach( Knoten v des Graphen )
-predecessor(v) = undefined
-if( v = s )
-    distance(v) = 0
-else
-    distance(v) = infinity
+    predecessor(v) = undefined
+    if( v = s )
+        distance(v) = 0
+    else
+        distance(v) = infinity
 
 while( es gibt nicht markierte Knoten v mit distance(v) < infinity )
-v = nicht markierter Knoten mit minimalem distance(v) Wert
-markiere v
-foreach( unmarkierter Nachbar w von v )
-    if( distance(w) > distance(v) + Kantengewicht(v,w) )
-        distance(w) = distance(v) + Kantengewicht(v,w)
-        predecessor(w) = v
+    v = nicht markierter Knoten mit minimalem distance(v) Wert
+    markiere v
+    foreach( unmarkierter Nachbar w von v )
+        if( distance(w) > distance(v) + Kantengewicht(v,w) )
+            distance(w) = distance(v) + Kantengewicht(v,w)
+            predecessor(w) = v
     \end{verbatim}
 
     \subsection{ Moore-Bellman-Ford }
@@ -329,17 +330,17 @@ predecessor()
 distance()
 
 foreach( Knoten v des Graphen )
-predecessor(v) = undefined
-if( v = s )
-distance(v) = 0
-else
-distance(v) = infinity
+    predecessor(v) = undefined
+    if( v = s )
+        distance(v) = 0
+    else
+        distance(v) = infinity
 
 repeat( Anzahl Knoten - 1 ) times
-foreach( Kante e = (v,w) des Graphen )
-    if( distance(w) > distance(v) + Kantengewicht(v,w) )
-        distance(w) = distance(v) + Kantengewicht(v,w)
-        predecessor(w) = v
+    foreach( Kante e = (v,w) des Graphen )
+        if( distance(w) > distance(v) + Kantengewicht(v,w) )
+            distance(w) = distance(v) + Kantengewicht(v,w)
+            predecessor(w) = v
     \end{verbatim}
 
     \subsection{ A* }
@@ -355,38 +356,38 @@ foreach( Kante e = (v,w) des Graphen )
     wobei $t$ den Zielknoten, $c$ das Kantengewicht von Knoten $v$ zu Knoten $w$ und $A$ die Menge aller Bögen im Graphen beschreibt.
     \begin{verbatim}
 input:  ein zusammenhängender, gewichteter Digraph 
-    mit nichtnegativen Kantengewichten,
-    eine heuristische Schätzfunktion heuristic,
-    ein Startknoten s,
-    ein Zielknoten t
+        mit nichtnegativen Kantengewichten,
+        eine heuristische Schätzfunktion heuristic,
+        ein Startknoten s,
+        ein Zielknoten t
 output: die kürzesten Wege von s zu jedem anderen erreichbaren Knoten, 
-    gegeben durch eine Vorgänger Beziehung,
-    die absoluten Distanzen von s zu jedem anderen Knoten
+        gegeben durch eine Vorgänger Beziehung,
+        die absoluten Distanzen von s zu jedem anderen Knoten
 
 predecessor()
 distance()
 
 foreach( Knoten v des Graphen )
-predecessor(v) = undefined
-if( v = s )
-distance(v) = 0
-else
-distance(v) = infinity
+    predecessor(v) = undefined
+    if( v = s )
+        distance(v) = 0
+    else
+        distance(v) = infinity
 
 while( es gibt einen nicht markierten Knoten v )
-v = nicht markierter Knoten mit minimalem distance(v) + heuristic(v)
-markiere v
-if( t ungleich v )
-    foreach( nicht markierten Nachbarn w von v )
-        if( distance(w) > distance(v) + Kantengewicht(v,w) )
-            distance(w) = distance(v) + Kantengewicht(v,w)
-            predecessor(w) = v
+    v = nicht markierter Knoten mit minimalem distance(v) + heuristic(v)
+    markiere v
+    if( t ungleich v )
+        foreach( nicht markierten Nachbarn w von v )
+            if( distance(w) > distance(v) + Kantengewicht(v,w) )
+                distance(w) = distance(v) + Kantengewicht(v,w)
+                predecessor(w) = v
     \end{verbatim}
 
-    \subsection{ Dynamische Programmierung - Rucksackproblem/Knapsack-Problem (KSP) }
-    Das Rucksackproblem ist ein doppeltes Optimierungsproblem. Es gibt $k \in mathbb{N}$ Elemente, 
-    die je über einen gewissen Profit $c_k \in mathbb{N}$ und ein gewisses Gewicht $a_k \in mathbb{N}$ verfügen. 
-    Zusätzlich ist ein Maximalgewicht $b \in mathbb{N}$, das nicht überschritten werden darf, definiert. 
+    \subsection{ Dynamische Programmierung - Rucksackproblem (KSP) }
+    Das Rucksackproblem ist ein doppeltes Optimierungsproblem. Es gibt $k \in \mathbb{N}$ Elemente, 
+    die je über einen gewissen Profit $c_k \in \mathbb{N}$ und ein gewisses Gewicht $a_k \in \mathbb{N}$ verfügen. 
+    Zusätzlich ist ein Maximalgewicht $b \in \mathbb{N}$, das nicht überschritten werden darf, definiert. 
     Es gilt nun die Elemente so auszuwählen, dass der meiste Nutzen entsteht.
     \newline
     Beim binären Rucksackproblem können Elemente nur ausgewählt oder weggelassen werden. Dagegen können beim allgemeinen Rucksackproblem 
