@@ -16,7 +16,7 @@ headsep=2mm]{geometry}
 \usepackage{todonotes}
 \usepackage{amsmath}
 \usepackage{amssymb}
-%\usepackage{showframe}
+\usepackage{showframe}
 
 
 % Header
@@ -385,23 +385,93 @@ while( es gibt einen nicht markierten Knoten v )
     \end{verbatim}
 
     \subsection{ Dynamische Programmierung - Rucksackproblem (KSP) }
-    Das Rucksackproblem ist ein doppeltes Optimierungsproblem. Es gibt $k \in \mathbb{N}$ Elemente, 
+    Das Rucksackproblem ist ein doppeltes Optimierungsproblem. Es gibt $n \in \mathbb{N}$ Elemente, 
     die je über einen gewissen Profit $c_k \in \mathbb{N}$ und ein gewisses Gewicht $a_k \in \mathbb{N}$ verfügen. 
     Zusätzlich ist ein Maximalgewicht $b \in \mathbb{N}$, das nicht überschritten werden darf, definiert. 
     Es gilt nun die Elemente so auszuwählen, dass der meiste Nutzen entsteht.
     \newline
     Beim binären Rucksackproblem können Elemente nur ausgewählt oder weggelassen werden. Dagegen können beim allgemeinen Rucksackproblem 
     auch mehrere Elemente von einem Typ ausgewählt werden.
-    \newpage    
+    \newline
+    Das binäre Rucksackproblem lässt sich mithile dynamischer Programmierung lösen. Dabei wird ein mehrdimensionales Optimierungsproblem
+    in leichter zu lösende Teilprobleme zerlegt und deren Lösungen gespeichert, um diese später beim Zusammensetzen der Einzellösungen 
+    wiederverwenden zu können. Dem Modell unterliegt ein kreisfreier, lexikographisch sortierter Digraph, der alle möglichen Kombinationen der Elemente 
+    darstellt. Ein Knoten entspricht einem Tupel $(k,\beta)$, wobei $k$ zwischen $0$ und $n$, $\beta$ zwischen $0$ und $b$ liegt. 
+    Außerdem wird jedem Knoten der bisher akkumulierte Nutzen $z_k$ zu gewiesen (Eintragungen in der Tabelle).
+    \newline
+    Es git nun drei mögliche Arten von Kanten in der Tabelle:
+    \begin{itemize}
+        \item Kante $1$ nach rechts ($\beta \rightarrow \beta + 1$ , $k$ bleibt gleich) - es wird kein weiteres Element ausgewählt und der akkumulierte Nutzen bleibt gleich.
+        \item Kante $1$ nach unten  ($\beta$ bleibt gleich, $k \rightarrow k + 1$) - ein neues Element$_{k+1}$ wird betrachtet aber nicht ausgewählt und der akkumulierte Nutzen bleibt gleich. 
+        \item Kante $a_{k+1}$ nach rechts, $1$ nach unten ($\beta \rightarrow \beta + a_{k+1}$ ,$k \rightarrow k + 1$) - ein neues Element$_{k+1}$ wird betrachtet, ausgewählt und der akkumulierte Nutzen erhöht sich.
+    \end{itemize}
+    Der akkumulierte Nutzen $z_k$ ist das Maximum aus zwei möglichen Fällen: entweder der Wert $z_{k-1}(\beta)$, also der $z$-Wert der Zellen 1 über der zu bestimmenden Zelle,
+    oder der Wert $z_{k-1}(\beta-a_{k-1})$ (, wenn er überhaupt existiert), also der Wert der Zelle, von der eine Diagonalkante zu der zu bestimmenden Zelle führt.   
     \begin{center}
         \includegraphics[width=0.95\linewidth,keepaspectratio]{KSP.png}
     \end{center}
     
 
 \section{ Flüsse in Netzwerken }
+    Ein (Fluss-)Netzwerk $N = (D,c,s,t)$ ist ein Digraph $D = (V,A)$ mit einer Kapazitätsfunktion $c: A \mapsto \mathbb{R}_+$ und zwei ausgezeichneten 
+    Knoten $s$, genannt Quelle, und $t$, genannt Senke. $N$ simuliert einen Fluss $f: A \mapsto \mathbb{R}_+$ (Wasser, Elektrizität, Verkehr, etc.) 
+    von der Quelle $s$ zur Senke $t$.
+
+    \subsection*{ Kapazitätsbedingung }
+    Für alle Kanten aus $A$ gilt: der Fluss $f(e)$ über eine Kante $e \in A$ ist nach oben beschränkt durch die Kapazität $c(e)$ der Kante.
+    
+    \subsection*{ Flusserhaltungsbedingung }
+    Für alle Knoten aus $V$ außer $s$ und $t$ gilt: die Summe des Zuflusses eines Knotens $v \in V$ (Summe der Flüsse aller in $v$ eingehenden Kanten) muss gleich der Summe aller 
+    Ausflüsse (Summer der Flüsse aller aus $v$ ausgehenden Kanten) sein.
+
+    \subsection*{ Gesamtfluss $|f|$ }
+    Der Gesamtfluss $|f|$ ist die Differenz aller Ausflüsse und Einflüsse der Quelle $s$ (alternativ die Differenz aller Einflüsse und 
+    Ausflüsse der Senke $t$).
+
+    \subsection*{ s-t-Schnitt }
+    Ein s-t-Schnitt ist eine Teilmenge $S$ der Knotenmenge $V$, sodass $S$ die Quelle $s$, nicht aber die Senke $t$ enthält.
+    Die Kapazität des Schnitts ergibt sich aus der Summe der Kapazitäten aller Kanten, die aus $S$ herausragen - also Knoten aus $S$ 
+    mit Knoten verbinden, die nicht in $S$ enthalten sind.
+
+    \subsection*{ augmentierender Weg }
+    Ein augmentierender Weg ist ein Weg von $s$ nach $t$, auf dem die Kapazität keiner Kante voll ausgeschöpft ist, also für jede im Weg enthaltene 
+    Kante $e$ gilt $f(e) < c(e)$. Der Fluss entlang des Weges ist also noch nicht maximal und kann daher auf jeder Kante um die kleinste $c(e) - f(e)$ 
+    Differenz des ganzen Weges erhöht werden.
+
+    \subsection*{ Residualgraph $D_f$ }
+    Der Residualgraph $D_f$ zu einem Netzwerk $N$ und einem Fluss $f$ beschreibt durch Vorwärts- und Rückwärtskanten, um wie viel der Fluss jeder Kante von $N$ 
+    erhöht und erniedrigt werden kann, sodass die Kapazitäts- und Flussbedingung erhalten bleiben. Für jede Kante in $N$, auf der der Fluss um Wert $x$ erhöht 
+    werden kann, wird in $D_f$ eine korrespondierende Vorwärtskante mit Gewicht $x$ eingetragen. Für jeden auf einer Kante in $N$ bereits existierenden Fluss mit Wert $y$ 
+    wird eine korrespondierende Rückwärtskante mit Gewicht $y$ eingetrage (der Fluss kann hier um $y$ reduziert werden).
+    
     \subsection{ Max-Flow-Min-Cut-Theorem }
+    Ein s-t-Fluss in einem Netzwerk ist genau dann maximal, wenn es keinen augmentierenden Weg mehr gibt. Der Wert eines maximalen s-t-Flusses stimmt mit dem Wert 
+    der minimalen Kapazität eines s-t-Schnitts überein.
 
     \subsection{ Edmonds-Karp }
+    Der Algorithmus von Edmonds und Karp erschließt sich systematisch kürzeste augmentierende Wege durch Breitensuche (\verb|find_augmenting_path|) und erhöht dann den Fluss entlang dieser Wege so 
+    weit wie möglich (\verb|augment_flow|). Wenn kein augmentierender Weg mehr gefunden werden kann, ist der Fluss maximal.
+
+    \begin{verbatim}
+input:  ein Flussnetzwerk N
+output: ein maximaler Fluss,
+        ein minimaler Schnitt
+
+flow()
+cut
+
+foreach( Kante e des Netzwerkes )
+    flow(e) = 0
+cut = alle Knoten des Netzwerkes
+
+while( Senke ist noch in cut enthalten )
+    (path, flow_delta, new_cut) = find_augmenting_path(N, flow)
+    cut = new_cut
+    if( Senke ist noch in cut enthalten )
+        flow = augment_flow(flow, path, flow_delta)
+
+return flow, cut
+    \end{verbatim}
 
     \subsection{ Push-Relabel }
 
