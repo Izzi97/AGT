@@ -6,6 +6,7 @@ headsep=2mm]{geometry}
 \usepackage{fancyhdr}
 \usepackage{multicol}
 \usepackage[utf8]{inputenc}
+\usepackage[german]{babel}
 \usepackage{graphicx}
 \usepackage{wrapfig}
 \usepackage{enumitem}
@@ -16,7 +17,7 @@ headsep=2mm]{geometry}
 \usepackage{todonotes}
 \usepackage{amsmath}
 \usepackage{amssymb}
-\usepackage{showframe}
+%\usepackage{showframe}
 
 
 % Header
@@ -62,13 +63,23 @@ headsep=2mm]{geometry}
 
 
 % Content
+\title{ Algorithmische Graphentheorie }
+\author{ Ismael Agchar }
+\date{\today}
+
 \begin{document}
+
+% \maketitle
+% \newpage
+\tableofcontents
+\newpage
+
 \begin{multicols*}{2}
 \normalsize
 \section{ Grundlagen }
     \subsection{ Graphen und Digraphen }
     
-    \subsubsection*{ Graph $G$ }
+    \subsubsection*{ Graph $G$ }  
     \[ G = (V,E) \]
     wobei $V$ eine endliche, nichtleere Menge an Knoten oder Ecken (Vertices) und $E$ eine Menge Kanten (Edges) 
     , gegeben durch ungeordnete Paare von Knoten $(v,w) v, w \in V$, ist.

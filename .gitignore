@@ -13,3 +13,4 @@ obj
 *.fls
 *.log
 *.synctex.gz
+*.toc
