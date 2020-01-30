@@ -418,7 +418,7 @@ while( es gibt einen nicht markierten Knoten v )
     Es gilt nun die Elemente so auszuwählen, dass der meiste Nutzen entsteht.
     \newline
     Beim binären Rucksackproblem können Elemente nur ausgewählt oder weggelassen werden. Dagegen können beim allgemeinen Rucksackproblem 
-    auch mehrere Elemente von einem Typ ausgewählt werden.
+    auch mehrere Elemente von einem Typ ausgewählt werden. Das allgemeine KSP ist $NP$-schwer.
     \newline
     Das binäre Rucksackproblem lässt sich mithile dynamischer Programmierung lösen. Dabei wird ein mehrdimensionales Optimierungsproblem
     in leichter zu lösende Teilprobleme zerlegt und deren Lösungen gespeichert, um diese später beim Zusammensetzen der Einzellösungen 
@@ -628,7 +628,7 @@ return flow, cut
     wenn für jede Teilmenge $U \subseteq V_1$ für die Menge der mit einem Element aus $U$ adjazenten Knoten $N(U)$ gilt:
     \[ |U| \leq |N(U)| \]
 
-    \subsection{ Blossom-Shrinking }
+    \subsection*{ Blossom-Shrinking }
     Der Blossom-Shrinking-Algorithmus findet ein maximales Matching $M$ in einem Graphen $G=(V,E)$. Hierzu findet er durch Breitensuche $M$-augmentierende Pfade 
     und tauscht (flip) deren Kanten wie oben beschrieben, um $M$ um die Endknoten des jeweiligen Pfades zu erweitern.
     \newline
@@ -647,13 +647,54 @@ return flow, cut
     Kann kein weiterer augmentierender Pfad mehr gefunden werden, ist das Matching maximal und man ist fertig.
 
 \section{ Euler- \& Hamiltonkreise }
-    \subsection{ Eulertour \& -kreis}
+    \subsection*{ Eulertour }
+    Eine Eulertour in einem Graphen $G = (V,E)$ ist ein Pfad von einem Knoten $v$ zu einem Knoten $w$, der Jede Kante aus $E$ genau einmal enthält. 
+    Ein zusammenhängender Graph besitzt genau dann eine Eulertour, wenn maximal zwei seiner Knoten ungeraden grad haben.
+    \newline
+    Ist die Eulertour geschlossen, spricht man von einem Eulerkreis. Besitzt ein Graph einen Eulerkreis, nennt man eulersch. Ein zusammenhängender Graph ist 
+    genau dann eulersch, wenn der Grad jedes Knotens gerade ist.
 
     \subsection{ Chinesisches Postboten-Problem (CPP) }
+    Gegeben ist ein Graph $G = (V,E)$ mit nichtnegativen Kantengewichten $c(e) \geq 0, \forall e \in E$. Ziel ist es, einen geschlossenen Pfad (Kreis) zu finden, 
+    der jede Kante mindestens einmal durchläuft und dabei minimales Gesamtgewicht (Summe aller durchlaufenen Kantengewichte) hat (z.B. effiziente Route für 
+    Postboten/Müllabfuhr im Straßennetz).
+    \newline
+    Ansatz: ein Eulerkreis ist die optimale Lösung, da er ja jede Kante genau einmal durchläuft.
+    \begin{itemize}
+        \item Ist der Grad aller Knoten von $G$ gerade, ist man fertig und muss nur noch eine Traversierung des Eulerkreises finden.
+        \item Gibt es Knoten mit ungeradem Grad, so müssen Kanten doppelt abeglaufen werden. Um einen entsprechenden Eulerkreis konstruieren zu können, 
+        muss der Grad der Knoten mit ungeradem Grad auf eine gerade Zahl angehoben werden. Dies geschieht durch Verdopplung der Kanten von Pfaden, die zwei Knoten mit 
+        ungeradem Grad verbinden (dies ist möglich, da es immer eine gerade Anzahl von Knoten mit ungeradem Grad gibt - vgl. Handshaking-Lemma). Es gilt nun, alle 
+        Knoten mit ungeradem Grad so zu verbinden, dass die entstehenden, verdoppelten Pfade aufsummiert das kleinste, zusätzlich Gewicht zum Graphen beisteuern.
+    \end{itemize}
 
-    \subsection{ Hamiltonkreis }
+    \subsection*{ Hamiltonkreis }
+    Ein Hamiltonkreis in einem Graphen $G = (V,E)$ mit mindestens 3 Knoten ist ein Kreis, der jeden Knoten aus $V$ genau einaml enthält. Besitzt ein Graph einen Hamiltonkreis nennt man ihn 
+    hamiltonisch. Das Problem zu entscheiden, ob ein Graph einen Hamiltonkreis enthält, ist $NP$-vollständig.
+
+    \subsection*{ Satz von Dirac }
+    Ein Graph $G = (V,E)$ ist genau dann hamiltonisch, wenn für jeden Knoten $v$ aus $V$ gilt:
+    \[ deg(v) \geq \lceil\frac{n}{2}\rceil, \quad \forall v \in V \]
+    , wobei $n$ die Anzahl aller Knoten in $V$ beschreibt.
 
     \subsection{ Travelling-Salesman-Problem (TSP) }
+    Gegeben ist der vollständige Graph $G = K_n$ mit nichtnegativen Kantengewichten $c(e) \geq 0, \forall e \in E$. Ziel ist es nun einen Hamiltonkreis mit 
+    minimalem Gewicht zu finden (Handlungsreisender, der möglichst effizient alle Städte des Landes bereisen will). Wenn die Abstände (= Kantengewichte) die 
+    Dreiecksungleichung ($c(u,w) \leq c(u,v) + c(v,w)$) erfüllen, nennt man das TSP metrisch. Das TSP ist $NP$-schwer. Daher sucht man 
+    sogenannte Heuristiken - Verfahren, die zumindest eine Näherungslösung in polynomialer Zeit liefern.
+    \subsubsection*{ Nearest-Neighbour-Heuristik }
+    Starte an einem beliebigen Knoten und baue von dort aus den Pfad auf. Füge dem Pfad vom Startknoten ausgehend solange immer den am schnellsten erreichbaren 
+    (noch nicht besuchten) Knoten hinzu, bis der Pfad alle Knoten enthält. Verbinde End und Anfang des Pfades.
+    \subsubsection*{ Christofides-Heuristik }
+    Die Christofides-Heuristik funtioniert nur für metrische TSPs.
+    \begin{enumerate}
+        \item Bestimme einen minimal aufspannenden Baum $S$ von $G$ (z.B. mit Kruskal).
+        \item Sei $W$ die Menge der Knoten mit ungeradem Grad im Spannbaum $S$.
+        \item Finde Pfade in $G$, die alle Knoten aus $W$ möglichst effizient verbinden.
+        \item Der Graph $G_*$, der aus Kombination des Spannbaumes $S$ und der Kanten der Pfade, die die ungeraden Knoten verbinden, entsteht ist eulersch.
+        \item Bestimme eine Eulertour.
+        \item Verkürze die Eulertour (Dreiecksungleichung).
+    \end{enumerate}
 
 
 \section{ Färbung von Graphen }
