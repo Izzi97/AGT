@@ -15,7 +15,21 @@
     listof=flat,
     final
 ]{scrbook}
- 
+
+
+% details about your thesis
+\newcommand{\titel}{}
+\newcommand{\artderarbeit}{Übungsaufgabe}  % {Bachelorarbeit,Masterarbeit}
+\newcommand{\autor}{Ismael Agchar}
+\newcommand{\studiengang}{Informatik}  % {Informatik,Wirtschaftsinformatik,Medieninformatik}
+\newcommand{\matrikelnr}{298\,5828}
+\newcommand{\erstgutachter}{Prof.\,Dr.\,rer.\,nat.~Friedhelm Stappert}
+\newcommand{\zweitgutachter}{Prof.\,Dr.~Korbinian Riedhammer}
+\newcommand{\logo}{figures/TH-Nuernberg-RGB.png}
+\newcommand{\keywords}{API, API-Management, API-Economy}
+\newcommand{\adorsys}{adorsys GmbH \& Co. KG}
+
+
 % custom head and foot
 \usepackage[automark]{scrlayer-scrpage}
 \pagestyle{scrheadings}
@@ -36,7 +50,7 @@
 \usepackage[T1]{fontenc}
 \usepackage{lmodern,relsize,textcomp,csquotes}
 \usepackage{amsmath,amsfonts}
-\usepackage[ngerman,english]{babel}  % flip for German thesis
+\usepackage[english,ngerman]{babel}  % flip for German thesis
 \usepackage[final]{graphicx}
 \usepackage{setspace,geometry,xcolor}
 \usepackage{makeidx}
@@ -49,6 +63,7 @@
 \usepackage{array}
 \usepackage{ragged2e}
 \usepackage{lscape}
+%\usepackage{showframe}
 
 % pdf hyperref
 \usepackage[
@@ -56,6 +71,11 @@
     bookmarksopen=true,
     bookmarksnumbered=true,
     bookmarksopenlevel=1,
+    pdftitle={\titel},
+    pdfauthor={\autor},
+    pdfcreator={\autor},
+    pdfsubject={\titel},
+    pdfkeywords={\keywords},
     pdfpagelabels=true,
     colorlinks=true,
     linkcolor=red,
@@ -69,18 +89,6 @@
     linktocpage=true,
 ]{hyperref}
 
-
-% configure your listings style
-\usepackage{listings}
-\lstset{
-	tabsize=3,
-	extendedchars=true,
-	frame=single,
-	showstringspaces=true,
-	numbers=left,
-	numberstyle=\small,
-	breakautoindent=true
-}
 
 % page setup
 % \setlength{\topskip}{\ht\strutbox}
@@ -106,13 +114,19 @@
 % TODO remove if not needed...
 \usepackage{blindtext}
 
+
 \begin{document}
 
 \setcounter{secnumdepth}{3}  % numerate subsections
 \setcounter{tocdepth}{2}  % ...but don't include them in toc
 
 \frontmatter
+\include{cover}\cleardoublepage
 
-\include{0_abstract}
+\include{0_abstract}\cleardoublepage
+
+\tableofcontents
+
+\mainmatter
 
 \end{document}
