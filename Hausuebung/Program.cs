@@ -22,7 +22,8 @@ namespace AGT
             var graph = GetChessGraph(KnightMovesAsNodes, startPosition);
             var adjacencyListCSV = graph.AdjacencyList.AdjacencyListAsCSV();
 
-            string results = new StringBuilder("graph for knight moves as adjacency table:")
+            string results = new StringBuilder()
+                .AppendLine("adjacency list")
                 .AppendLine(adjacencyListCSV)
                 .ToString();
             Console.Write(results);
@@ -61,28 +62,28 @@ namespace AGT
                 source,
                 target,
                 heuristic);
-            var aStarResCSV = Algorithms.AStarResultTableToExcel(aStarRes);
-            var aStarResPath = Algorithms.FormatPathDistanceTuple(Algorithms.PathDistTupleFromSPResult(aStarRes.predecessors, aStarRes.sourceDistances, target));
+
+            var aStarExcel = Algorithms.AlgorithmProtocolToExcel(aStarRes);
+
             Console.WriteLine($"A* from {source} to {target}");
-            Console.WriteLine(aStarResCSV);
-            Console.WriteLine(aStarResPath);
+            Console.WriteLine(aStarExcel);
             Console.WriteLine();
-            ResultsToDesktop(aStarResCSV, $"{filename}.csv");
+            ResultsToDesktop(aStarExcel, $"{filename}.csv");
         }
 
         private static void ExecuteBFS(Graph graph, Vertex source, Vertex target)
         {
             var bfsResult = Algorithms.BFS(graph, source, target);
-            var bfsResultsCSV = Algorithms.BFSResultToExcel(bfsResult);
+            var bfsResultsExcel = Algorithms.AlgorithmProtocolToExcel(bfsResult);
 
-            var bfsPathDistTuple = Algorithms.PathDistTupleFromSPResult(bfsResult.predecessors, bfsResult.sourceDistances, target);
-            var bfsPathDistTupleString = Algorithms.FormatPathDistanceTuple(bfsPathDistTuple);
+            //var bfsPathDistTuple = Algorithms.PathDistTupleFromSPResult(bfsResult.predecessors, bfsResult.sourceDistances, target);
+            //var bfsPathDistTupleString = Algorithms.FormatPathDistanceTuple(bfsPathDistTuple);
 
             Console.WriteLine($"BFS results table - source {source}:");
-            Console.WriteLine(bfsResultsCSV);
-            Console.WriteLine(bfsPathDistTupleString);
+            Console.WriteLine(bfsResultsExcel);
+            //Console.WriteLine(bfsPathDistTupleString);
             Console.WriteLine();
-            ResultsToDesktop(bfsResultsCSV, "bfs.csv");
+            ResultsToDesktop(bfsResultsExcel, "bfs.csv");
         }
 
         private static void ExecuteIDAStar(Graph graph, Vertex source, Vertex target, Func<Vertex, Vertex, double> heuristic, string filename)
@@ -92,12 +93,10 @@ namespace AGT
                 source,
                 target,
                 heuristic);
-            var iDAStarResCsv = Algorithms.IDAStarResultTableToExcel(iDAStarRes);
-            var iDAStarResPath = Algorithms.FormatPathDistanceTuple((iDAStarRes.path, iDAStarRes.distance));
+            var iDAStarResExcel = Algorithms.AlgorithmProtocolToExcel(iDAStarRes);
             Console.WriteLine($"IDA* from {source} to {target}");
-            Console.WriteLine(iDAStarResCsv);
-            Console.WriteLine(iDAStarResPath);
-            ResultsToDesktop(iDAStarResCsv, $"{filename}.csv");
+            Console.WriteLine(iDAStarResExcel);
+            ResultsToDesktop(iDAStarResExcel, $"{filename}.csv");
         }
 
         private static Graph GetChessGraph(Func<Vertex, IEnumerable<Vertex>> DiscoverPossibleMovesAsNodes, ChessPosition chessPieceStartPosition)

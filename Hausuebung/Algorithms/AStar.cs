@@ -8,7 +8,7 @@ namespace AGT
 {
     public static partial class Algorithms
     {
-        public static (Dictionary<Vertex, Vertex> predecessors, Dictionary<Vertex, double> sourceDistances, int queuedVertices, int processedVertices) AStar(WeightedDigraph graph, Vertex source, Vertex target, Func<Vertex, Vertex, double> heuristic)
+        public static AlgorithmResult AStar(WeightedDigraph graph, Vertex source, Vertex target, Func<Vertex, Vertex, double> heuristic)
         {
             if (!graph.Vertices.Contains(source)) throw new ArgumentException("source vertex not contained in vertice set of graph");
 
@@ -21,6 +21,13 @@ namespace AGT
             Dictionary<Vertex, Vertex> predecessors = InitPredecessors(graph, source);
             Dictionary<Vertex, double> sourceDistances = InitDists(graph, source);
 
+            var protocol = new AlgorithmProtocol();
+            var initialProtocolStep = new AlgorithmProtocolStep(
+                null,
+                new Dictionary<Vertex, (Vertex, double)>(predecessors.Select(kvp => new KeyValuePair<Vertex, (Vertex, double)>(kvp.Key, (kvp.Value, sourceDistances[kvp.Key]))))
+            );
+            protocol.AddStep(initialProtocolStep);
+
             while (!processedVertices.Contains(target))
             {
                 Vertex vertex = GetNextVertex(sourceDistances, heuristic, target, remainingVertices);
@@ -30,6 +37,7 @@ namespace AGT
 
                 if (vertex != target)
                 {
+                    var nextProtocolStep = new AlgorithmProtocolStep(vertex, new Dictionary<Vertex, (Vertex, double)>(protocol.Steps.Last().Table.Select(entry => entry)));
                     var remainingNeighbours = graph.AdjacencyList.GetNeighboursFor(vertex).Except(processedVertices);
                     foreach (Vertex neighbour in remainingNeighbours)
                     {
@@ -37,12 +45,17 @@ namespace AGT
                         {
                             sourceDistances[neighbour] = sourceDistances[vertex] + 6.0; //get dist (6.0) from edge instead of hard coded
                             predecessors[neighbour] = vertex;
+                            nextProtocolStep.AddOrUpdate(neighbour, vertex, sourceDistances[neighbour]);
                         }
                     }
+
+                    protocol.AddStep(nextProtocolStep);
                 }
             }
 
-            return (predecessors, sourceDistances, sourceDistances.Where(kvp => kvp.Value != double.PositiveInfinity).Select(kvp => kvp.Key).Except(processedVertices).Count(), processedVertices.Count());
+            int queuedVerts = sourceDistances.Where(kvp => kvp.Value != double.PositiveInfinity).Select(kvp => kvp.Key).Except(processedVertices).Count();
+            int processedVerts = processedVertices.Count();
+            return new AlgorithmResult(protocol, queuedVerts, processedVerts);
 
             Vertex GetNextVertex(Dictionary<Vertex, double> dists, Func<Vertex, Vertex, double> heur, Vertex t, IEnumerable<Vertex> remainingVerts)
             {
@@ -76,25 +89,6 @@ namespace AGT
                 }
                 return output;
             }
-        }
-
-        public static string AStarResultTableToExcel((Dictionary<Vertex, Vertex> predecessors, Dictionary<Vertex, double> sourceDistances, int discoveredVertsCnt, int processedVertsCnt) aStarResult)
-        {
-            StringBuilder resultBuilder = new StringBuilder();
-            resultBuilder.AppendLine("vertex;predecessor;source_distance");
-
-            foreach (Vertex v in aStarResult.predecessors.Keys)
-            {
-                string predecessor = !Equals(aStarResult.predecessors[v], null) ? aStarResult.predecessors[v].ToString() : "nil";
-                resultBuilder.AppendLine($"{v};{predecessor};{aStarResult.sourceDistances[v]}");
-            }
-
-            resultBuilder
-                .AppendLine()
-                .AppendLine("vertices_remaining_queue;vertices_processed")
-                .AppendLine($"{aStarResult.discoveredVertsCnt};{aStarResult.processedVertsCnt}");
-
-            return resultBuilder.ToString();
         }
     }
 }

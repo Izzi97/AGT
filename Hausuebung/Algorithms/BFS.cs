@@ -8,14 +8,7 @@ namespace AGT
 {
     public static partial class Algorithms
     {
-        public static (
-            Dictionary<Vertex, Vertex> predecessors, 
-            Dictionary<Vertex, double> sourceDistances, 
-            Dictionary<Vertex, int> index, 
-            int queuedVerticesCnt, 
-            int processedVerticesCnt
-        )
-        BFS(Graph graph, Vertex source, Vertex target)
+        public static AlgorithmResult BFS(Graph graph, Vertex source, Vertex target)
         {
             if (!graph.Vertices.Contains(source)) throw new ArgumentException("start vertex not contained in vertice set of graph");
 
@@ -26,7 +19,19 @@ namespace AGT
             var queue = new Queue<Vertex>();
             var processedVerts = new List<Vertex>();
 
-            var result = InitResult(graph, source);
+            var init = Init(graph, source);
+            var predecessors = init.predecessors;
+            var distances = init.sourceDistances;
+            var indices = init.index;
+            int queuedVerticesCnt = 0;
+            int processedVertsCnt = 0;
+
+            var protocol = new AlgorithmProtocol();
+            var firstProtocolStep = new AlgorithmProtocolStep(
+                null,
+                new Dictionary<Vertex, (Vertex, double)>(predecessors.Select(kvp => new KeyValuePair<Vertex, (Vertex, double)>(kvp.Key, (kvp.Value, distances[kvp.Key]))))
+            );
+            protocol.AddStep(firstProtocolStep);
 
             queue.Enqueue(source);
             vertices = vertices.Except(source);
@@ -38,6 +43,7 @@ namespace AGT
                 var head = queue.Dequeue();
                 processedVerts.Add(head);
                 var neighbours = adjacencyList.GetNeighboursFor(head);
+                var nextProtocolStep = new AlgorithmProtocolStep(head, new Dictionary<Vertex, (Vertex, double)>(protocol.Steps.Last().Table.Select(entry => entry)));
 
                 foreach (var neighbour in neighbours)
                 {
@@ -45,43 +51,44 @@ namespace AGT
                     {
                         queue.Enqueue(neighbour);
                         vertices = vertices.Except(neighbour);
-                        result.predecessors[neighbour] = head;
-                        result.sourceDistances[neighbour] = result.sourceDistances[head] + 6;
-                        result.index[neighbour] = ++index;
+                        predecessors[neighbour] = head;
+                        distances[neighbour] = distances[head] + 6;
+                        indices[neighbour] = ++index;
+                        nextProtocolStep.AddOrUpdate(neighbour, head, distances[neighbour]);
 
                         if (Equals(neighbour, target))
                         {
-                            result.queuedVerticesCnt = queue.Count();
-                            result.processedVertsCnt = processedVerts.Count();
-                            return result;
+                            queuedVerticesCnt = queue.Count();
+                            processedVertsCnt = processedVerts.Count();
+                            return new AlgorithmResult(protocol, queuedVerticesCnt, processedVertsCnt);
                         }
                     }
                 }
+
+                protocol.AddStep(nextProtocolStep);
             }
 
-            result.queuedVerticesCnt = queue.Count();
-            result.processedVertsCnt = processedVerts.Count();
-            return result;
+            queuedVerticesCnt = queue.Count();
+            processedVertsCnt = processedVerts.Count();
+            return new AlgorithmResult(protocol, queuedVerticesCnt, processedVertsCnt);
 
             (
             Dictionary<Vertex, Vertex> predecessors,
             Dictionary<Vertex, double> sourceDistances,
-            Dictionary<Vertex, int> index,
-            int queuedVerticesCnt,
-            int processedVertsCnt
+            Dictionary<Vertex, int> index
             ) 
-            InitResult(Graph g, Vertex s)
+            Init(Graph g, Vertex s)
             {
-                (Dictionary<Vertex, Vertex> predecessors, Dictionary<Vertex, double> sourceDistances, Dictionary<Vertex, int> index, int queuedVerticesCnt, int processedVertsCnt) output =
-                    (new Dictionary<Vertex, Vertex>(), new Dictionary<Vertex, double>(), new Dictionary<Vertex, int>(), 0, 0);
+                (Dictionary<Vertex, Vertex> predecessors, Dictionary<Vertex, double> sourceDistances, Dictionary<Vertex, int> index) tmp =
+                    (new Dictionary<Vertex, Vertex>(), new Dictionary<Vertex, double>(), new Dictionary<Vertex, int>());
                 foreach (Vertex v in g.Vertices)
                 {
-                    output.predecessors[v] = null;
-                    output.sourceDistances[v] = Equals(v, s) ? 0 : double.PositiveInfinity;
-                    output.index[v] = Equals(v, s) ? 0 : -1;
+                    tmp.predecessors[v] = null;
+                    tmp.sourceDistances[v] = Equals(v, s) ? 0 : double.PositiveInfinity;
+                    tmp.index[v] = Equals(v, s) ? 0 : -1;
                 }
 
-                return output;
+                return tmp;
             }
         }
 
