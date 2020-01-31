@@ -143,7 +143,8 @@ headsep=2mm]{geometry}
     Ein Digraph hat genau dann eine topologische Sortierung, wenn er keinen gerichteten Kreis enthält.
     \newpage
     \subsubsection*{ TopSort }
-    \begin{verbatim}
+    \small
+\begin{verbatim}
 input:  ein beliebiger Digraph
 output: eine topologische Sortierung, gegeben durch die 
         Knoten-Index-Beziehung oder die Aussage, dass ein Kreis vorliegt
@@ -161,6 +162,7 @@ if( es sind noch Knoten übrig )
 else 
     return sort
     \end{verbatim}
+\normalsize
 
 \section{ Suche in Graphen }
     Suchverfahren für Graphen traversieren alle von einem Startknoten $s$ aus erreichbaren Knoten 
@@ -172,7 +174,8 @@ else
     keine Nicht-Baumkante $e$ gibt, die eine Querverbindung im Spannbaum darstellt ($e$ verbindet zwei Baumknoten 
     auf gleicher Höhe des Baumes).
     \subsection{ Breitensuche (BFS) }
-    \begin{verbatim}
+    \small
+\begin{verbatim}
 input:  ein zusammenhängender Graph G, 
         ein Startknoten s
 output: Index der Traversierung, Vorgänger und Abstand von s für 
@@ -208,9 +211,11 @@ while( queue ist nicht leer )
 
 return index, predecessor, distance
     \end{verbatim}
+\normalsize
     
     \subsection{ Tiefensuche (DFS) }
-    \begin{verbatim}
+    \small
+\begin{verbatim}
 input:  ein zusammenhängender Graph G, ein Startknoten s
 output: Index der Traversierung, Vorgänger und Abstand von s für 
     jeden von s aus erreichbaren Knoten
@@ -245,6 +250,7 @@ while( stack ist nicht leer )
 
 return index, predecessor, distance
     \end{verbatim}
+\normalsize
 
 
 \section{ Minimal aufspannende Bäume }
@@ -254,7 +260,8 @@ return index, predecessor, distance
     gehörigen Fundamentalschnitt. Fügt man dem aufspannenden Baum eine Kante $k$ hinzu, enthält der Baum nun 
     einen Kreis - den zu $k$ gehörigen Fundamentalkreis.
     \subsection{ Kruskal }
-    \begin{verbatim}
+    \small
+\begin{verbatim}
 input:  ein zusammenhängender Graph mit Kantengewichten
 output: ein minimal aufspannender Baum
 
@@ -273,9 +280,11 @@ foreach( Kante e der aufsteigend sortierten Kanten )
         if( counter = Anzahl aller Knoten - 1 )
             return tree
     \end{verbatim}
+\normalsize
 
     \subsection{ Prim }
-    \begin{verbatim}
+    \small
+\begin{verbatim}
 input:  ein zusammenhängender Graph mit Kantengewichten, 
         ein Startknoten s
 output: ein minimal aufspannender Baum gegeben durch eine 
@@ -299,11 +308,13 @@ while( noch nicht alle Knoten erreichbar )
             predecessor(w) = v
     markiere v als erreichbar
     \end{verbatim}
+\normalsize
 
 
 \section{ Kürzeste Wege }
     \subsection{ Dijkstra }
-    \begin{verbatim}
+    \small
+\begin{verbatim}
 input:  ein gewichteter Digraph mit nichtnegativen Kantengewichten,
         ein Startknoten s
 output: die kürzesten Wege von s zu jedem anderen erreichbaren Knoten, 
@@ -328,9 +339,11 @@ while( es gibt nicht markierte Knoten v mit distance(v) < infinity )
             distance(w) = distance(v) + Kantengewicht(v,w)
             predecessor(w) = v
     \end{verbatim}
+\normalsize
 
     \subsection{ Moore-Bellman-Ford }
-    \begin{verbatim}
+    \small
+\begin{verbatim}
 input:  ein konservativer Digraph,
     ein Startknoten s
 output: die kürzesten Wege von s zu jedem anderen erreichbaren Knoten, 
@@ -353,6 +366,7 @@ repeat( Anzahl Knoten - 1 ) times
             distance(w) = distance(v) + Kantengewicht(v,w)
             predecessor(w) = v
     \end{verbatim}
+\normalsize
 
     \subsection{ A* }
     Der A*-Algorithmus ist eine optimierte Variante des Algorithmus von Dijkstra. Die Breitensuche, über die Dijkstra sich den 
@@ -365,7 +379,8 @@ repeat( Anzahl Knoten - 1 ) times
     \[ h(t) = 0 \]
     \[ h(v) \leq c(v,w) + h(w), \quad \forall (v,w) \in A \]
     wobei $t$ den Zielknoten, $c$ das Kantengewicht von Knoten $v$ zu Knoten $w$ und $A$ die Menge aller Bögen im Graphen beschreibt.
-    \begin{verbatim}
+    \small
+\begin{verbatim}
 input:  ein zusammenhängender, gewichteter Digraph 
         mit nichtnegativen Kantengewichten,
         eine heuristische Schätzfunktion heuristic,
@@ -394,6 +409,7 @@ while( es gibt einen nicht markierten Knoten v )
                 distance(w) = distance(v) + Kantengewicht(v,w)
                 predecessor(w) = v
     \end{verbatim}
+\normalsize
 
     \subsection{ Dynamische Programmierung - Rucksackproblem (KSP) }
     Das Rucksackproblem ist ein doppeltes Optimierungsproblem. Es gibt $n \in \mathbb{N}$ Elemente, 
@@ -402,7 +418,7 @@ while( es gibt einen nicht markierten Knoten v )
     Es gilt nun die Elemente so auszuwählen, dass der meiste Nutzen entsteht.
     \newline
     Beim binären Rucksackproblem können Elemente nur ausgewählt oder weggelassen werden. Dagegen können beim allgemeinen Rucksackproblem 
-    auch mehrere Elemente von einem Typ ausgewählt werden.
+    auch mehrere Elemente von einem Typ ausgewählt werden. Das allgemeine KSP ist $NP$-schwer.
     \newline
     Das binäre Rucksackproblem lässt sich mithile dynamischer Programmierung lösen. Dabei wird ein mehrdimensionales Optimierungsproblem
     in leichter zu lösende Teilprobleme zerlegt und deren Lösungen gespeichert, um diese später beim Zusammensetzen der Einzellösungen 
@@ -463,6 +479,80 @@ while( es gibt einen nicht markierten Knoten v )
     Der Algorithmus von Edmonds und Karp erschließt sich systematisch kürzeste augmentierende Wege durch Breitensuche (\verb|find_augmenting_path|) und erhöht dann den Fluss entlang dieser Wege so 
     weit wie möglich (\verb|augment_flow|). Wenn kein augmentierender Weg mehr gefunden werden kann, ist der Fluss maximal.
 
+    \large
+\begin{verbatim}
+find_augmenting_path()
+    \end{verbatim}
+    \small
+\begin{verbatim}
+input:  ein Flussnetzwerk N,
+        ein Fluss flow
+output: ein augmentierender Weg gegeben über die Vorgänger-Beziehung,
+        ein minimaler Wert, um den der Fluss entlang des augmentierenden 
+        Weges erhöht werden kann,
+        eine Orietierungsfunktion, die Knoten als über Vorwärts- oder 
+        Rückwärtskanten erreichbar markiert,
+        ein korrespondierender s-t-Schnitt
+
+predecessor
+flow_delta()
+orientation()
+cut
+
+markiere s, indem s cut hinzugefügt wird
+foreach( Knoten v )
+    flow_delta(v) = infinity
+
+führe von s Breitensuche aus mit:
+    if( neuer Knoten w ist über Vorwärtskante erreichbar )
+        orientation(w) = +
+        flow_delta(w) = Minimum aus flow_delta(predecessor(w)) und Wert, 
+                        um den der Zufluss von w erhöht werden kann
+    else
+        orientation(w) = -
+        flow_delta(w) = Minimum aus flow_delta(predecessor(w)) und Zufluss 
+                        von w
+    predecessor(w) = v
+    markiere w, indem w cut hinzugefügt wird
+
+return (predecessor, flow_delta(t), orientation, cut)
+    \end{verbatim}
+\normalsize
+
+    \large
+\begin{verbatim}
+augment_flow()
+    \end{verbatim}
+    \small
+\begin{verbatim}
+input:  ein Flussnetzwerk,
+        ein Fluss flow,
+        ein augmentierender Weg gegeben über eine Vorgänger-Beziehung 
+        predecessor,
+        ein minimaler Wert flow_delta, um den der Fluss entlang des 
+        augmentierenden Weges erhöht werden kann,
+        eine Orietierungsfunktion, die Knoten als über Vorwärts- oder 
+        Rückwärtskanten erreichbar markiert
+output: ein um flow_delta augmentierter Fluss
+
+v = t
+w = undefined
+
+while( w ungleich s )
+    w = predecessor(v)
+    if( orientation(v) = + )
+        flow(w,v) = flow(w,v) + flow_delta
+    else
+        flow(w,v) = flow(w,v) - flow_delta
+    v = w
+    \end{verbatim}
+\normalsize
+
+    \large
+\begin{verbatim}
+edmonds_karp()
+    \end{verbatim}
+    \small
     \begin{verbatim}
 input:  ein Flussnetzwerk N
 output: ein maximaler Fluss,
@@ -476,31 +566,135 @@ foreach( Kante e des Netzwerkes )
 cut = alle Knoten des Netzwerkes
 
 while( Senke ist noch in cut enthalten )
-    (path, flow_delta, new_cut) = find_augmenting_path(N, flow)
+    (path, flow_delta, orientation, new_cut) = find_augmenting_path(N, flow)
     cut = new_cut
     if( Senke ist noch in cut enthalten )
-        flow = augment_flow(flow, path, flow_delta)
+        flow = augment_flow(flow, path, flow_delta, orientation)
 
 return flow, cut
     \end{verbatim}
+\normalsize
 
     \subsection{ Push-Relabel }
-
+    Der Push-Relabel-Algorithmus erzeugt - im Gegensatz zum Algorithmus von Edmonds und Karp - nicht in jedem Schritt einen korrekten Fluss, sonder arbeitet mit 
+    sogenannten Präflüssen, einem  \shorthandoff{"}"Arbeitsfluss"\shorthandon{"}, der noch zum maximalen Fluss ausgearbeitet werden muss. Im Präfluss darf der 
+    Zufluss eines Knotens größer als sein Abfluss sein, jedoch darf der Präfluss die Kapazitätsgrenzen der Kanten nicht übersteigen. Der Überschuss, der in 
+    einem Knoten $v$ durch einen höheren Zu- als Abfluss entstehen kann, wird Exzess $e(v)$ genannt. Ein Knoten, dessen Exzess größer $0$ ist, wird aktiv genannt. 
+    Ein Präfluss ist genau dann ein gültiger Fluss, wenn es keine aktiven Knoten gibt.
+    \newline
+    Idee des Push-Relabel-Algorithmus ist, von der Quelle den größtmöglichen Präfluss ins Netzwerk ausströmen zu lassen und alle 
+    (ungültigen) Exzesse zukzessive \shorthandoff{"}"zurückzuschieben"\shorthandon{"}, sodass ein maximaler gültiger Fluss entsteht. Damit nicht im Kreis 
+    zurückgeschoben wird, werden Knoten, die einen Exzess ausgeglichen haben, angehoben auf eine Höhe $d$. Die Höhe der Senke $d(t)$ ist $0$.
+    \newline
+    Hierzu werden zu Beginn alle Abflüsse der Quelle auf deren Maxima (= Kapazitäten) und die Flüsse über alle anderen Kanten auf $0$ gesetzt - somit sind alle
+    Nachbarn der Quelle aktiv. Zudem wird die Quelle auf die Höhe $d(s) = |V|$ Anzahl der Knoten im Netzwerk angehoben. Alle anderen Knoten haben Höhe $0$. Man 
+    wählt nun sukzessive (z.B. nach lexikographischer Ordnung) einen aktiven Knoten $v$ aus bis es keinen aktiven Knoten mehr gibt und führt je eine der folgenden zwei Operationen aus:
+    \paragraph*{Relabel}, wenn alle Nachbarn, auf die $v$ schieben kann, höher als $v$ selbst liegen.
+    \paragraph*{Push}, wenn zumindest ein Nachbarn, auf den $v$ schieben kann, mindestens ein Level niedriger liegt.
+    \newline
+    \verb|Relabel(v)|: hebe $v$ ein Level höher als den niedrigsten all seiner höheren beschiebbaren Nachbarn.
+    \newline
+    \verb|Push(v,w)|: $\gamma = $ Minimum aus Exzess $e(v)$ und schiebbarem Betrag zum niedrigsten Nachbarn $w$ aller niedrigeren beschiebbaren Nachbarn von $v$. 
+    Schiebe $\gamma$-viel von $v$ auf $w$ und passe den Exzess von $v$ und die Restkapazität der Kante $(v,w)$ entsprechend an. 
 
 \section{ Matchings }
-    \subsection{ Matchings via augmentierende Wege }
+    \subsection*{ Matching $M$ }
+    In einem Graphen $G = (V,E)$ nennt man eine Kantenteilmenge $M \subseteq E$ Matching, wenn keine zwei Kanten aus $M$ einen gemeinsamen Endknoten haben. 
+    Ist ein Knoten $v$ Endpunkt einer in $M$ enthaltenen Kante, nennt man $v$ $M$-gesättigt, ansonsten $M$-ungesättigt oder exponiert. 
+    \newline
+    Ein Matching $M$ heißt perfekt, wenn jeder Knoten in $G$ $M$-gesättigt ist. 
+    \newline
+    Ein Matching $M$ heißt maximal, wenn es kein Matching $M'$ in $G$ gibt, das mehr Kanten enthält als $M$.
+    \subsection*{ Alternierender Pfad $P$ }
+    In einem Graphen $G = (V,E)$, der ein Matching $M$ enthält, ist ein alternierender Pfad ein Pfad, der nur aus Kanten besteht, die abwechselnd zu $M$ und 
+    den Rest-Kanten $E \setminus M$ gehören. Ist in einem alternierenden Pfad der erste und der Letzte Knoten $M$-ungesättigt (hierzu muss der Pfad gerade Länge haben), 
+    nennt man den Pfad $M$-erweiternd oder $M$-augemntierend. Tauscht man in einem $M$-augmentierenden Pfad alle Kanten (flip) so, dass genau die Kanten zum 
+    Matching gehören, die davor zu den Rest-Kanten gezählt haben, und umgekehrt, erhält man einen alternierenden Pfad, dessen Enden gesättigt sind - man hat 
+    das Matching um die beiden vormals ungesättigten Endknoten des Pfades erweitert:
+    \[ 1-2=3-4=5-6 \quad \rightarrow \quad 1=2-3=4-5=6 \]
+    \newline
+    Ein Matching $M$ ist genau dann maximal, wenn es keinen $M$-augmentierenden Pfad mehr gibt.
+    \subsection*{ Symmetrische Differenz }
+    Seien $M_1$ und $M_2$ Matchings im Graphen $G = (V,E)$, dann ist die symmetrische Differenz von zwei Matchings definiert als:
+    \[ M_1 \triangle M_2 = (M_1 \setminus M_2) \cup (M_2 \setminus M_1) \]
+    Für jede Zusammenhangskomponente $K$ des Untergraphen $G_{\triangle} = (V,M_1 \triangle M_2)$ von $G$ gilt eine der folgenden 
+    Eigenschaften:
+    \begin{itemize}
+        \item $K$ ist ein Zyklus gerader länge mit Kanten abwechselnd in $M_1$ und $M_2$.
+        \item $K$ ist ein Weg , dessen Kanten abwechselnd in $M_1$ und $M_2$ liegen und dessen Endknoten in einem der beiden Matchings ungesättigt sind.
+    \end{itemize}
+    \subsection*{ Heiratssatz von Hall }
+    In einem bipartiten Graphen $G = (V = V_1 \uplus V_2, E)$ mit Bipartition $V_1$/$V_2$ gibt es genau dann ein matching, dass jeden Knoten in $V_1$ sättigt, 
+    wenn für jede Teilmenge $U \subseteq V_1$ für die Menge der mit einem Element aus $U$ adjazenten Knoten $N(U)$ gilt:
+    \[ |U| \leq |N(U)| \]
 
-    \subsection{ Blossom-Shrinking }
-
+    \subsection*{ Blossom-Shrinking }
+    Der Blossom-Shrinking-Algorithmus findet ein maximales Matching $M$ in einem Graphen $G=(V,E)$. Hierzu findet er durch Breitensuche $M$-augmentierende Pfade 
+    und tauscht (flip) deren Kanten wie oben beschrieben, um $M$ um die Endknoten des jeweiligen Pfades zu erweitern.
+    \newline
+    Die Breitensuche startet immer vom lexikographisch kleinsten exponierten Knoten. Der entstehende Breitensuchbaum ist ein alternierender Baum, 
+    dessen Kantenebenen abwechselnd nur Matching-Kanten oder nur Rest-Kanten enthalten.
+    \newline
+    Wird ein ungerader Kreis, erkennbar als Nicht-Matching-Querkante oder -Rückwärtskante im alternierenden Baum, gefunden, liegt ein sogenanntes Blossom vor. Ein Blossom wird durch einen 
+    neuen Knoten $v_*$ (lexikographisch $1$ größer als der bisherige lexikographisch größte Knoten) ersetzt. $v_*$ erhält alle in das Blossom eingehenden Kanten. 
+    Hierbei können Dopplungen auftreten - in diesem Fall kann jeweils irgendeine der doppelten Kanten ausgewählt werden.
+    \newline
+    Ziel ist nun, erst den reduzierten Blossomknoten $v_*$ in eine maximale Matching-Verkantung einzubetten, dann das Innere des Blossoms auf die schon maximale
+    umgebende Verkantung abzustimmen und ggf. letztere noch korrektiv anzupassen. Dazu führt man den bisherigen Prozess des Findens und Erweiterns augmentierender 
+    Pfade fort, bis man einen Pfad findet, der den Knoten $v_*$ enthält, der das Blossom ersetzt hat. Je nach Einbindung von $v_*$ in den erweiterten Weg nach 
+    dem Flip kann das Innere des Blossoms entsprechend auf einen längeren alternierenden Pfad angepasst werden, der dann das komplette Blossom enthält.
+    \newline
+    Kann kein weiterer augmentierender Pfad mehr gefunden werden, ist das Matching maximal und man ist fertig.
 
 \section{ Euler- \& Hamiltonkreise }
-    \subsection{ Eulertour \& -kreis}
+    \subsection*{ Eulertour }
+    Eine Eulertour in einem Graphen $G = (V,E)$ ist ein Pfad von einem Knoten $v$ zu einem Knoten $w$, der Jede Kante aus $E$ genau einmal enthält. 
+    Ein zusammenhängender Graph besitzt genau dann eine Eulertour, wenn maximal zwei seiner Knoten ungeraden grad haben.
+    \newline
+    Ist die Eulertour geschlossen, spricht man von einem Eulerkreis. Besitzt ein Graph einen Eulerkreis, nennt man eulersch. Ein zusammenhängender Graph ist 
+    genau dann eulersch, wenn der Grad jedes Knotens gerade ist.
 
     \subsection{ Chinesisches Postboten-Problem (CPP) }
+    Gegeben ist ein Graph $G = (V,E)$ mit nichtnegativen Kantengewichten $c(e) \geq 0, \forall e \in E$. Ziel ist es, einen geschlossenen Pfad (Kreis) zu finden, 
+    der jede Kante mindestens einmal durchläuft und dabei minimales Gesamtgewicht (Summe aller durchlaufenen Kantengewichte) hat (z.B. effiziente Route für 
+    Postboten/Müllabfuhr im Straßennetz).
+    \newline
+    Ansatz: ein Eulerkreis ist die optimale Lösung, da er ja jede Kante genau einmal durchläuft.
+    \begin{itemize}
+        \item Ist der Grad aller Knoten von $G$ gerade, ist man fertig und muss nur noch eine Traversierung des Eulerkreises finden.
+        \item Gibt es Knoten mit ungeradem Grad, so müssen Kanten doppelt abeglaufen werden. Um einen entsprechenden Eulerkreis konstruieren zu können, 
+        muss der Grad der Knoten mit ungeradem Grad auf eine gerade Zahl angehoben werden. Dies geschieht durch Verdopplung der Kanten von Pfaden, die zwei Knoten mit 
+        ungeradem Grad verbinden (dies ist möglich, da es immer eine gerade Anzahl von Knoten mit ungeradem Grad gibt - vgl. Handshaking-Lemma). Es gilt nun, alle 
+        Knoten mit ungeradem Grad so zu verbinden, dass die entstehenden, verdoppelten Pfade aufsummiert das kleinste, zusätzlich Gewicht zum Graphen beisteuern.
+    \end{itemize}
 
-    \subsection{ Hamiltonkreis }
+    \subsection*{ Hamiltonkreis }
+    Ein Hamiltonkreis in einem Graphen $G = (V,E)$ mit mindestens 3 Knoten ist ein Kreis, der jeden Knoten aus $V$ genau einaml enthält. Besitzt ein Graph einen Hamiltonkreis nennt man ihn 
+    hamiltonisch. Das Problem zu entscheiden, ob ein Graph einen Hamiltonkreis enthält, ist $NP$-vollständig.
+
+    \subsection*{ Satz von Dirac }
+    Ein Graph $G = (V,E)$ ist genau dann hamiltonisch, wenn für jeden Knoten $v$ aus $V$ gilt:
+    \[ deg(v) \geq \lceil\frac{n}{2}\rceil, \quad \forall v \in V \]
+    , wobei $n$ die Anzahl aller Knoten in $V$ beschreibt.
 
     \subsection{ Travelling-Salesman-Problem (TSP) }
+    Gegeben ist der vollständige Graph $G = K_n$ mit nichtnegativen Kantengewichten $c(e) \geq 0, \forall e \in E$. Ziel ist es nun einen Hamiltonkreis mit 
+    minimalem Gewicht zu finden (Handlungsreisender, der möglichst effizient alle Städte des Landes bereisen will). Wenn die Abstände (= Kantengewichte) die 
+    Dreiecksungleichung ($c(u,w) \leq c(u,v) + c(v,w)$) erfüllen, nennt man das TSP metrisch. Das TSP ist $NP$-schwer. Daher sucht man 
+    sogenannte Heuristiken - Verfahren, die zumindest eine Näherungslösung in polynomialer Zeit liefern.
+    \subsubsection*{ Nearest-Neighbour-Heuristik }
+    Starte an einem beliebigen Knoten und baue von dort aus den Pfad auf. Füge dem Pfad vom Startknoten ausgehend solange immer den am schnellsten erreichbaren 
+    (noch nicht besuchten) Knoten hinzu, bis der Pfad alle Knoten enthält. Verbinde End und Anfang des Pfades.
+    \subsubsection*{ Christofides-Heuristik }
+    Die Christofides-Heuristik funtioniert nur für metrische TSPs.
+    \begin{enumerate}
+        \item Bestimme einen minimal aufspannenden Baum $S$ von $G$ (z.B. mit Kruskal).
+        \item Sei $W$ die Menge der Knoten mit ungeradem Grad im Spannbaum $S$.
+        \item Finde Pfade in $G$, die alle Knoten aus $W$ möglichst effizient verbinden.
+        \item Der Graph $G_*$, der aus Kombination des Spannbaumes $S$ und der Kanten der Pfade, die die ungeraden Knoten verbinden, entsteht ist eulersch.
+        \item Bestimme eine Eulertour.
+        \item Verkürze die Eulertour (Dreiecksungleichung).
+    \end{enumerate}
 
 
 \section{ Färbung von Graphen }
