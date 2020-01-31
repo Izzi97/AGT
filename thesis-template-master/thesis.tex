@@ -124,47 +124,13 @@
 % TODO remove if not needed...
 \usepackage{blindtext}
 
-
 \begin{document}
 
 \setcounter{secnumdepth}{3}  % numerate subsections
 \setcounter{tocdepth}{2}  % ...but don't include them in toc
 
 \frontmatter
-\include{cover}\cleardoublepage
 
-% download the following form and complete it (hit save in your editor)
-% https://intern.ohmportal.de/fileadmin/Gelenkte_Doks/Abt/SZS/SB/SB_0050_FO_Pruefungsrechtliche_Erklaerung_und_Erklaerung_zur_Veroeffentlichung_der_Abschlussarbeit_public.pdf
-\includepdf{SB_0050_FO_Pruefungsrechtliche_Erklaerung_und_Erklaerung_zur_Veroeffentlichung_der_Abschlussarbeit_public.pdf}\cleardoublepage
-
-\include{content/0_abstract}\cleardoublepage
-
-\tableofcontents
-
-\mainmatter
-\include{content/1_intro}
-\include{content/2_data}
-\include{content/3_method}
-\include{content/4_experiments}
-\include{content/5_outlook}
-\include{content/6_summary}
-
-% remove if not needed
-\appendix
-\include{content/a1_supplemental}
-
-\backmatter
-\listoffigures
-\cleardoublepage
-
-\listoftables
-\cleardoublepage
-
-\renewcommand{\lstlistlistingname}{List of Listings}  % change for German thesis
-\lstlistoflistings
-\cleardoublepage
-
-\bibliographystyle{wmaainf}
-\bibliography{refs}
+\include{0_abstract}
 
 \end{document}
