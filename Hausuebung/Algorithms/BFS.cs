@@ -58,7 +58,7 @@ namespace AGT
 
                         if (Equals(neighbour, target))
                         {
-                            queuedVerticesCnt = queue.Count();
+                            queuedVerticesCnt = distances.Where(kvp => kvp.Value != double.PositiveInfinity).Count();
                             processedVertsCnt = processedVerts.Count();
                             return new AlgorithmResult(protocol, queuedVerticesCnt, processedVertsCnt);
                         }
@@ -68,7 +68,7 @@ namespace AGT
                 protocol.AddStep(nextProtocolStep);
             }
 
-            queuedVerticesCnt = queue.Count();
+            queuedVerticesCnt = distances.Where(kvp => kvp.Value != double.PositiveInfinity).Count();
             processedVertsCnt = processedVerts.Count();
             return new AlgorithmResult(protocol, queuedVerticesCnt, processedVertsCnt);
 

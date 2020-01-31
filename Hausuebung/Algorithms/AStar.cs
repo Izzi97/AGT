@@ -53,9 +53,9 @@ namespace AGT
                 }
             }
 
-            int queuedVerts = sourceDistances.Where(kvp => kvp.Value != double.PositiveInfinity).Select(kvp => kvp.Key).Except(processedVertices).Count();
+            int visitedVerts = sourceDistances.Where(kvp => kvp.Value != double.PositiveInfinity).Count();
             int processedVerts = processedVertices.Count();
-            return new AlgorithmResult(protocol, queuedVerts, processedVerts);
+            return new AlgorithmResult(protocol, visitedVerts, processedVerts);
 
             Vertex GetNextVertex(Dictionary<Vertex, double> dists, Func<Vertex, Vertex, double> heur, Vertex t, IEnumerable<Vertex> remainingVerts)
             {

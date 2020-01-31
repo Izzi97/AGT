@@ -53,6 +53,11 @@ namespace AGT
             ExecuteIDAStar(graph, source, target, (v, w) => 0.0, "idastar_0");
             ExecuteIDAStar(graph, source, target, Vertex.GetScaledManhattenDist(2.0), "idastar_manhattendist");
             ExecuteIDAStar(graph, source, target, Vertex.GetScaledEuclideanMax(3.0), "idastar_euclidmax");
+
+            ////////////////////////////////////////////////////////////////////////////////
+            /// KEEP THE F**KING WINDOW OPEN
+            ////////////////////////////////////////////////////////////////////////////////
+            Console.ReadLine();
         }
 
         private static void ExecuteAStar(Graph graph, Vertex source, Vertex target, Func<Vertex, Vertex, double> heuristic, string filename)
