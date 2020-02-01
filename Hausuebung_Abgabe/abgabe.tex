@@ -2,33 +2,29 @@
     11pt,
     a4paper,
     egregdoesnotlikesansseriftitles,
-    toc=chapterentrywithdots,
-    twoside,openright,
+    % twoside,
     titlepage,
     parskip=half,
     headings=normal,  % reduces heading size
     listof=totoc,
-    bibliography=totoc,
     index=totoc,
     captions=tableheading,  % caption below table
-    chapterprefix,
     listof=flat,
     final
-]{scrbook}
+]{scrartcl}
 
 
 % details about your thesis
-\newcommand{\titel}{}
-\newcommand{\artderarbeit}{Übungsaufgabe}  % {Bachelorarbeit,Masterarbeit}
-\newcommand{\autor}{Ismael Agchar}
-\newcommand{\studiengang}{Informatik}  % {Informatik,Wirtschaftsinformatik,Medieninformatik}
-\newcommand{\matrikelnr}{298\,5828}
-\newcommand{\erstgutachter}{Prof.\,Dr.\,rer.\,nat.~Friedhelm Stappert}
-\newcommand{\zweitgutachter}{Prof.\,Dr.~Korbinian Riedhammer}
+\newcommand{\titel}{Ein Vergleich der Algorithmen A*, BFS \& IDA* bezüglich des effizienten Findens kürzester Wege in schlichten Digraphen.}
+\newcommand{\artderarbeit}{Hausübung}
+\newcommand{\autori}{Ismael Agchar}
+\newcommand{\matrikelnri}{3031780}
+\newcommand{\autorf}{Fabian Meister}
+\newcommand{\matrikelnrf}{2985828}
+\newcommand{\studiengang}{Informatik}
+\newcommand{\gutachter}{Prof.\,Dr.~Alexander Hufnagel}
 \newcommand{\logo}{figures/TH-Nuernberg-RGB.png}
-\newcommand{\keywords}{API, API-Management, API-Economy}
-\newcommand{\adorsys}{adorsys GmbH \& Co. KG}
-
+ 
 
 % custom head and foot
 \usepackage[automark]{scrlayer-scrpage}
@@ -36,12 +32,9 @@
 \ihead{\headmark}
 \chead{}
 \ohead{\pagemark}
-\renewcommand*\chaptermarkformat{\chapappifchapterprefix{\ }% 
-  \thechapter.\enskip}
 
 \RedeclareSectionCommand[tocindent=0pt]{section}
 \RedeclareSectionCommand[tocindent=0pt]{subsection}
-%\RedeclareSectionCommand[tocnumwidth=70pt]{chapter}
 
 \usepackage{scrhack}
 
@@ -58,12 +51,14 @@
 \usepackage{url}
 \usepackage{pdfpages}
 
+% private packages
+\usepackage{multicol}
+
 % table setup
 \usepackage{longtable}
 \usepackage{array}
 \usepackage{ragged2e}
 \usepackage{lscape}
-%\usepackage{showframe}
 
 % pdf hyperref
 \usepackage[
@@ -72,10 +67,9 @@
     bookmarksnumbered=true,
     bookmarksopenlevel=1,
     pdftitle={\titel},
-    pdfauthor={\autor},
-    pdfcreator={\autor},
+    pdfauthor={\autori},
+    pdfcreator={\autori},
     pdfsubject={\titel},
-    pdfkeywords={\keywords},
     pdfpagelabels=true,
     colorlinks=true,
     linkcolor=red,
@@ -88,7 +82,6 @@
     hypertexnames=true,
     linktocpage=true,
 ]{hyperref}
-
 
 % page setup
 % \setlength{\topskip}{\ht\strutbox}
@@ -111,22 +104,20 @@
 \newcommand{\etal}{\mbox{\emph{et.\,al.\ }}}
 
 
-% TODO remove if not needed...
-\usepackage{blindtext}
-
-
 \begin{document}
 
 \setcounter{secnumdepth}{3}  % numerate subsections
 \setcounter{tocdepth}{2}  % ...but don't include them in toc
 
-\frontmatter
-\include{cover}\cleardoublepage
+\include{cover}
 
-\include{0_abstract}\cleardoublepage
+% download the following form and complete it (hit save in your editor)
+% https://intern.ohmportal.de/fileadmin/Gelenkte_Doks/Abt/SZS/SB/SB_0050_FO_Pruefungsrechtliche_Erklaerung_und_Erklaerung_zur_Veroeffentlichung_der_Abschlussarbeit_public.pdf
+% \includepdf{SB_0050_FO_Pruefungsrechtliche_Erklaerung_und_Erklaerung_zur_Veroeffentlichung_der_Abschlussarbeit_public.pdf}\cleardoublepage
 
 \tableofcontents
 
-\mainmatter
+\include{content/1_intro}
+\include{content/2_process}
 
 \end{document}

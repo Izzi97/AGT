@@ -1,0 +1,28 @@
+\section{ Einführung }\label{se:intro}
+\paragraph*{}
+Ziel der Übung ist es, die drei Algorithmen A*, Breitensuche und IDA* auf ein Wegefindungsproblem in einem 
+schlichten Digraphen $G = (V,A,c)$ anzuwenden. $G$ soll alle möglichen Züge eines Springers auf einem Schachfeld
+modellieren. Jedem Springerzug - somit jeder Kante $e \in A$ - werden die Kosten $c(e) = 6$ zugewiesen. Der 
+Startknoten $s$ des Springers liegt fix bei (C,4), der Zielknoten $t$ bei (A,1). Die Algorithmen A* und IDA* 
+sollen jeweils mit drei parametrisierten, heuristischen Abstandsfunktionen $h_i: V \rightarrow \mathbb{R}$ 
+durchgeführt werden:
+\[ h_0(v) \quad = \quad 0 \]
+\[ h_1(v) \quad = \quad \alpha_1\cdot\Big( x(t)-x(v) \quad+\quad y(t)-y(v) \Big) \]
+\[ h_2(v) \quad = \quad \alpha_2\cdot max\{x(t)-x(v), y(t)-y(v)\} \]
+Wobei $\alpha \geq 0$ ist. $x: V \rightarrow \mathbb{N}_0$ beschreibt den alphabetischen Koordinatenwert und 
+$y: V \rightarrow \mathbb{N}_0$ den numerischen Koordinatenwert einer Position auf dem Schachfeld:
+\[ x((C,4)) = 3, \quad y((C,4)) = 4 \]
+
+\paragraph*{}
+Insgesamt sind also sieben Algorithmendurchführungen (dreimal A*, dreimal IDA*, einmal BFS) auf einem Graphen 
+mit 64 Knoten anzufertigen und schrittweise zu dokumentieren. Wegen der schieren Länge dieser Dokumentation 
+entscheiden wir uns dafür, die Algorithmen und ihre Dokumentation in geeigneter Form zu implementieren. Als 
+Sprache für dieses Vorhaben wählen wir C\#, weil ihre Runtime bereits über viele komfortable Datenstrukturen, 
+wie z.B. generic sets, und mit LINQ (LanguageINtegratedQuery) über mächtige Transformations- und 
+Filterfunktionen auf diesen Datenstrukturen verfügt. Insbesondere erlauben die generic sets eine Implementierung, 
+die im Sinne der Lesbarkeit sehr nahe an den im Skript vorgestellten Pseudocode-Implementierungen liegt. Der 
+Quellcode ist diesem Dokument nicht direkt beigefügt sondern wird separat als VisualStudio-Projektmappe übersandt.
+Diese enthält neben aller Meta-Informationen, die zum Kompilieren des Projekts benötigt werden, auch eine für 
+Windows 10 x64 kompilierte Executable-Datei, um das Programm direkt ausführen zu können. Das Programm erschließt 
+sich zunächst den Graphen vom Startknoten (C,4) aus, führt dann alle sieben Algorithmen nacheinander aus und 
+schreibt entsprechende Protokolle als CSV-Dateien in einen Ordner auf dem Desktop.
