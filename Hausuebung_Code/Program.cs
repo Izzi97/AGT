@@ -81,12 +81,8 @@ namespace AGT
             var bfsResult = Algorithms.BFS(graph, source, target);
             var bfsResultsExcel = Algorithms.AlgorithmProtocolToExcel(bfsResult);
 
-            //var bfsPathDistTuple = Algorithms.PathDistTupleFromSPResult(bfsResult.predecessors, bfsResult.sourceDistances, target);
-            //var bfsPathDistTupleString = Algorithms.FormatPathDistanceTuple(bfsPathDistTuple);
-
             Console.WriteLine($"BFS results table - source {source}:");
             Console.WriteLine(bfsResultsExcel);
-            //Console.WriteLine(bfsPathDistTupleString);
             Console.WriteLine();
             ResultsToDesktop(bfsResultsExcel, "bfs.csv");
         }
@@ -229,13 +225,6 @@ namespace AGT
                     return (false, null);
                 }
             }
-        }
-
-        private static double DiscoveryRatio(Dictionary<Vertex, double> sourceDistances)
-        {
-            int discoveries = sourceDistances.Where(kvp => kvp.Value != double.PositiveInfinity).Count();
-            int total = sourceDistances.Count();
-            return ((double)discoveries) / total;
         }
 
         private static void ResultsToDesktop(string results, string filename)

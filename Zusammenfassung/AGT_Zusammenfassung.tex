@@ -628,7 +628,7 @@ return flow, cut
     wenn für jede Teilmenge $U \subseteq V_1$ für die Menge der mit einem Element aus $U$ adjazenten Knoten $N(U)$ gilt:
     \[ |U| \leq |N(U)| \]
 
-    \subsection*{ Blossom-Shrinking }
+    \subsection{ Blossom-Shrinking }
     Der Blossom-Shrinking-Algorithmus findet ein maximales Matching $M$ in einem Graphen $G=(V,E)$. Hierzu findet er durch Breitensuche $M$-augmentierende Pfade 
     und tauscht (flip) deren Kanten wie oben beschrieben, um $M$ um die Endknoten des jeweiligen Pfades zu erweitern.
     \newline
@@ -698,10 +698,39 @@ return flow, cut
 
 
 \section{ Färbung von Graphen }
+    Eine Knotenfärbung eines schlichten Graphen $G = (V,E)$ ist eine Abbildung $f:V \rightarrow \mathbb{N}$, sodass keine zwei benachbarten Knoten dieselbe 
+    Farbe (aka. Zahl) zugewiesen bekommen. Ist $|f(V)| = k$, nennt man $G$ $k$-färbbar. 
+
+    \subsubsection*{ Chromatischen Zahl $\chi(G)$ }
+    Die kleinste Zahl $k$, für die ein Graph $k$-färbbar ist, ist die chromatische Zahl $\chi(G)$ von $G$. Sei $\Delta(G)$ der maximale Knoten Grad in $G$, 
+    dann gilt:
+    \[ \chi(G) \leq \Delta(G) + 1 \]
+    Ist $G$ zusammenhängend und weder der vollständige Graph noch ein ungerader Kreis, dann gilt:
+    \[ \chi(G) \leq \Delta(G) \]
+
     \subsection{ Färbung planarer Graphen }
+    \subsubsection*{ Fünffarbensatz }
+    Jeder planare Graph ist 5-färbbar.
+    \subsubsection*{ Vierfarbensatz }
+    Jeder palanre Graph ist 4-färbbar.
 
-    \subsection{ Heuristiken zur Graphenfärbung }
+    \subsection{ Greedy-Färbung }
+    Die Greedy-Färbung ist eine Heuristik und liefert abhängig von der gewählten Verarbeitungsreihenfolge unterschiedlich gute Ergebnisse. Sei wählt immer die 
+    nächstbeste freie Farbe für einen Knoten aus. Hierzu werden erst alle Knoten des Graphen in eine willkürliche Reihenfolge gebracht. Dann wird jedem Knoten 
+    $v$ sukzessive immer die kleinstwertige der Farben zugewiesen, die keiner der Nachbarn von $v$ hat. Am Ende, nachdem allen Knoten eine Farbe zugewiesen wurde, 
+    entspricht die höchstwertige Farbe der chromatischen Zahl des Graphen.
 
+    \subsection{ DSatur }
+    Auch der DSatur-Algorithmus ist eine Heuristik. Er liefert aber wesentlich robustere Ergebnisse als die Greedy-Färbung. Im Kern funktioniert der 
+    DSatur-Algorithmus wie die Greedy-Färbung. Allerdings werden beim DSatur die Knoten nicht in eine willkürliche Reihenfolge gebracht, sondern immer der Knoten 
+    mit den meisten gefärbten Nachbarn ausgewählt. Sollte dies nicht eindeutig sein, dann wählt man aus diesen den Knoten mit dem höchsten Grad. Sollte auch dies 
+    nicht eindeutig sein, kann zufällig gewählt werden.
+
+    \subsection{ Recursive-Largest-First (RLF) }
+    Der Recursive-Largest-First-Algorithmus ist ebenso eine Heuristik, verfolgt aber eine ganz andere Strategie als Greedy und DSatur. Der RLF versucht für jede 
+    Farbe eine möglichst große unabhängige Menge an Knoten zu finden und diese dann zu färben. Wähle hierzu eine Farbe, gehe den gesamten Graphen durch und färbe 
+    alle Knoten, die mit der Farbe gefärbt werden können. Wiederhole solange, bis alle Knoten gefärbt sind.
+    
 
 \end{multicols*}
 \end{document}
